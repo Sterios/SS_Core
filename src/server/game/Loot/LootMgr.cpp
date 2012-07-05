@@ -322,6 +322,7 @@ LootItem::LootItem(LootStoreItem const& li)
 
     ItemTemplate const* proto = sObjectMgr->GetItemTemplate(itemid);
     freeforall  = proto && (proto->Flags & ITEM_PROTO_FLAG_PARTY_LOOT);
+    follow_loot_rules = proto && (proto->FlagsCu & ITEM_FLAGS_CU_FOLLOW_LOOT_RULES);
 
     needs_quest = li.needs_quest;
 
@@ -512,18 +513,20 @@ QuestItemList* Loot::FillQuestLoot(Player* player)
     for (uint8 i = 0; i < quest_items.size(); ++i)
     {
         LootItem &item = quest_items[i];
-        if (!item.is_looted && item.AllowedForPlayer(player))
+
+        if ((!item.is_looted && item.AllowedForPlayer(player)) || (item.follow_loot_rules && player->GetGroup() && player->GetGroup()->GetLootMethod() == MASTER_LOOT && player->GetGroup()->GetLooterGuid() == player->GetGUID()))
         {
             ql->push_back(QuestItem(i));
 
-            // questitems get blocked when they first appear in a
+            // quest items get blocked when they first appear in a
             // player's quest vector
             //
             // increase once if one looter only, looter-times if free for all
-            if (item.freeforall || !item.is_blocked)
+            if (item.freeforall && !item.is_blocked)
+            {
                 ++unlootedCount;
-
-            item.is_blocked = true;
+                item.is_blocked = true;
+            }
 
             if (items.size() + ql->size() == MAX_NR_LOOT_ITEMS)
                 break;
@@ -546,7 +549,7 @@ QuestItemList* Loot::FillNonQuestNonFFAConditionalLoot(Player* player, bool pres
     for (uint8 i = 0; i < items.size(); ++i)
     {
         LootItem &item = items[i];
-        if (!item.is_looted && !item.freeforall && item.AllowedForPlayer(player))
+        if (!item.is_looted && !item.freeforall && (item.AllowedForPlayer(player)) || (item.follow_loot_rules && player->GetGroup() && player->GetGroup()->GetLootMethod() == MASTER_LOOT && player->GetGroup()->GetLooterGuid() == player->GetGUID()))
         {
             if (presentAtLooting)
                 item.AddAllowedLooter(player);
@@ -901,7 +904,26 @@ ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv)
             {
                 b << uint8(l.items.size() + (qi - q_list->begin()));
                 b << item;
-                b << uint8(slotType);
+                if (item.follow_loot_rules)
+                {
+                    switch (lv.permission)
+                    {
+                        case MASTER_PERMISSION:
+                            b << uint8(LOOT_SLOT_TYPE_MASTER);
+                            break;
+                        case GROUP_PERMISSION:
+                            if (!item.is_blocked)
+                                b << uint8(LOOT_SLOT_TYPE_ALLOW_LOOT);
+                            else
+                                b << uint8(LOOT_SLOT_TYPE_ROLL_ONGOING);
+                            break;
+                        default:
+                            b << uint8(slotType);
+                            break;
+                    }
+                }
+                else
+                    b << uint8(slotType);
                 ++itemsShown;
             }
         }
@@ -937,7 +959,26 @@ ByteBuffer& operator<<(ByteBuffer& b, LootView const& lv)
             {
                 b << uint8(ci->index);
                 b << item;
-                b << uint8(slotType);
+                if (item.follow_loot_rules)
+                {
+                    switch (lv.permission)
+                    {
+                    case MASTER_PERMISSION:
+                        b << uint8(LOOT_SLOT_TYPE_MASTER);
+                        break;
+                    case GROUP_PERMISSION:
+                        if (!item.is_blocked)
+                            b << uint8(LOOT_SLOT_TYPE_ALLOW_LOOT);
+                        else
+                            b << uint8(LOOT_SLOT_TYPE_ROLL_ONGOING);
+                        break;
+                    default:
+                        b << uint8(slotType);
+                        break;
+                    }
+                }
+                else
+                    b << uint8(slotType);
                 ++itemsShown;
             }
         }
