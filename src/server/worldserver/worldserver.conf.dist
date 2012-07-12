@@ -701,7 +701,6 @@ LogDB.World = 0
 
 LogDB.Chat = 0
 
-
 #    ChatLogFile
 #        Description: Log file for chat logs.
 #        Default:     "Chat.log" - (Enabled)
@@ -793,6 +792,203 @@ ChatLogs.BattleGround = 0
 
 #
 ###################################################################################################
+
+###############################################################################
+# CHAT LOGGING AND LEXICS CUTTER
+#
+#    ChatLog.Enable
+#        Enable system of chat logging.
+#        Default: 1 - on
+#                 0 - off
+#
+
+ChatLog.Enable = 1
+
+#
+#    ChatLog.FlushAfterNumberOfBytes
+#        Defines number of written bytes when log should be flushed to disk (for all logs except
+#        log with filtered innormative messages. This log is flushed for every message).
+#        Default: 1024
+#
+
+ChatLog.FlushAfterNumberOfBytes = 1024
+
+#
+#    ChatLog.DateSplit
+#        Split log files by date (filename must include $d as date placeholder).
+#        Default: 1 - split
+#                 0 - do not split
+#
+
+ChatLog.DateSplit = 1
+
+#
+#    ChatLog.UTFHeader
+#        Add UTF8 header at the beginning of new file.
+#        Default: 1 - add
+#                 0 - do not add
+#
+
+ChatLog.UTFHeader = 1
+
+#
+#    ChatLog.Ignore.Unprintable
+#        Ignore messages with unprintable characters.
+#        Default: 1 - ignore
+#                 0 - do not ignore
+#
+
+ChatLog.Ignore.Unprintable = 1
+
+#
+#    ChatLog.Lexics.Enable
+#        Enable lexics cutter in chats.
+#        Default: 1 - on
+#                 0 - off
+#
+
+ChatLog.Lexics.Enable = 1
+
+#
+#    ChatLog.Lexics.Cut.Enable
+#        Cut innormative lexics in chat.
+#        Default: 1 - cut
+#                 0 - do not cut
+#
+
+ChatLog.Lexics.Cut.Enable = 1
+
+#
+#    ChatLog.Lexics.Cut.Replacement
+#        Text shown instead of message with innormative lexics.
+#
+
+ChatLog.Lexics.Cut.Replacement = &!@^%!^&*!!!
+
+#
+#    ChatLog.Lexics.WordsFile
+#        Path to the file with words considered as innormative.
+#
+
+ChatLog.Lexics.WordsFile = innormative_words.txt
+
+#
+#    ChatLog.Lexics.AnalogsFile
+#        Path to the file with letter analogs.
+#
+
+ChatLog.Lexics.AnalogsFile = letter_analogs.txt
+
+#
+#    ChatLog.Lexics.Ignore.Spaces
+#        Ignore spaces in filtered words. Example: W O R D
+#        Default: 1 - ignore
+#                 0 - do not ignore
+#
+
+ChatLog.Lexics.Ignore.Spaces = 1
+
+#
+#    ChatLog.Lexics.Ignore.Repeats
+#        Ignore repeating symbols in filtered words. Example: WWWOOOORRRRRRDDD
+#        Default: 1 - ignore
+#                 0 - do not ignore
+#
+
+ChatLog.Lexics.Ignore.Repeats = 1
+
+#
+#    ChatLog.Lexics.Ignore.GM
+#        Ignore (do not filter) messages from GM.
+#        Default: 1 - ignore
+#                 0 - do not ignore
+#
+
+ChatLog.Lexics.Ignore.GM = 1
+
+#
+#    ChatLog.Lexics.Action
+#        Action taken when bad lexics is found.
+#        Default: 0 - log only
+#                 1 - polymorph
+#                 2 - stun
+#                 3 - instant kill
+#                 4 - leave 5 health
+#                 5 - mute
+#                 6 - stuck (works as stun + 50% health) [by KAPATEJIb]
+#                 7 - resurrection sickness [by Koshei]
+#                 8 - shear [by Koshei]
+#
+
+ChatLog.Lexics.Action = 0
+
+#
+#    ChatLog.Lexics.Action.Duration
+#        Duration of action in milliseconds.
+#        Default: 0 - no duration
+#
+
+ChatLog.Lexics.Action.Duration = 0
+
+#
+#    SETTINGS FOR DIFFERENT CHAT TYPES
+#    Available types:
+#        * Chat - common chat
+#        * Party - party chat
+#        * Guild - guild chat
+#        * Whisper - whispers
+#        * Channel - channels
+#        * Raid - raid chat
+#        * BattleGround - battleground chat
+#        * Lexics.Innormative - messages filtered by lexics cutter
+#
+#    ChatLog.*.File
+#        Log file name for given chat type.
+#
+#    ChatLog.*.Screen
+#        Output message in server console for given chat type.
+#        Default: 0 - do not show
+#                 1 - show
+#
+#    ChatLog.Lexics.*.Cut
+#        Cut lexics for given chat type (except Innormative).
+#        Default: 1 - cut
+#                 0 - do not cut
+#
+
+ChatLog.Chat.File = "main_chat-$d.log"
+ChatLog.Chat.Screen = 0
+ChatLog.Lexics.Chat.Cut = 1
+
+ChatLog.Party.File = "party_chat-$d.log"
+ChatLog.Party.Screen = 0
+ChatLog.Lexics.Party.Cut = 1
+
+ChatLog.Guild.File = "guild_chat-$d.log"
+ChatLog.Guild.Screen = 0
+ChatLog.Lexics.Guild.Cut = 1
+
+ChatLog.Whisper.File = "whisper_chat-$d.log"
+ChatLog.Whisper.Screen = 0
+ChatLog.Lexics.Whisper.Cut = 1
+
+ChatLog.Channel.File = "channel_chat-$d.log"
+ChatLog.Channel.Screen = 0
+ChatLog.Lexics.Channel.Cut = 1
+
+ChatLog.Raid.File = "raid_chat-$d.log"
+ChatLog.Raid.Screen = 0
+ChatLog.Lexics.Raid.Cut = 1
+
+ChatLog.BattleGround.File = "bg_chat-$d.log"
+ChatLog.BattleGround.Screen = 0
+ChatLog.Lexics.BattleGround.Cut = 1
+
+ChatLog.Lexics.Innormative.File = "innormative-$d.log"
+ChatLog.Lexics.Innormative.Screen = 0
+
+#
+###############################################################################
 
 ###################################################################################################
 # SERVER SETTINGS
