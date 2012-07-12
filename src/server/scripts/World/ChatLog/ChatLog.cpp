@@ -288,7 +288,10 @@ void ChatLog::_Punish(Player* player, std::string& msg)
     // special action
     switch (_lexicsAction)
     {
-        case LEXICS_ACTION_SHEEP:       _ApplySpell(player, 118);   break;
+        case LEXICS_ACTION_SHEEP:       
+            _ApplySpell(player, 42365);
+            player->GetSession()->m_muteTime = time(NULL) + int64(_lexicsActionDuration / 1000);
+            break;
         case LEXICS_ACTION_STUN:        _ApplySpell(player, 13005); break;
         case LEXICS_ACTION_STUCK:       _ApplySpell(player, 23312); break;
         case LEXICS_ACTION_SICKNESS:    _ApplySpell(player, 15007); break;
