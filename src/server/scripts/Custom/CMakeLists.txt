@@ -10,6 +10,7 @@
 
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
+  Custom/npc_customize.cpp
   Custom/duel_reset.cpp
   Custom/arena_spectator.cpp
 )

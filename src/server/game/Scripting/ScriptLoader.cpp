@@ -1246,6 +1246,8 @@ void AddBattlegroundScripts()
 }
 
 #ifdef SCRIPTS
+// custom
+void AddSC_npc_customize();
 /* This is where custom scripts' loading functions should be declared. */
 
 #endif
@@ -1253,6 +1255,7 @@ void AddBattlegroundScripts()
 void AddCustomScripts()
 {
 #ifdef SCRIPTS
+    AddSC_npc_customize();
     /* This is where custom scripts should be added. */
     AddSC_DuelReset();
     AddSC_arena_spectator_script();
