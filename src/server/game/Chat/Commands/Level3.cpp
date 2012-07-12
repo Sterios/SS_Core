@@ -2319,6 +2319,8 @@ bool ChatHandler::HandleBanHelper(BanMode mode, const char *args)
     if (!*args)
         return false;
 
+    std::string announce;
+
     char* cnameOrIP = strtok ((char*)args, " ");
     if (!cnameOrIP)
         return false;
@@ -2383,6 +2385,21 @@ bool ChatHandler::HandleBanHelper(BanMode mode, const char *args)
             SetSentErrorMessage(true);
             return false;
     }
+
+    if (mode == BAN_CHARACTER)
+        announce = "The character '";
+    else if (mode == BAN_IP)
+        announce = "The IP '";
+    else
+    announce = "Аккаунт '";
+    announce += nameOrIP.c_str();
+    announce += "' забанен на ";
+    announce += duration;
+    announce += " персонажем '";
+    announce += m_session->GetPlayerName();
+    announce += "'. Причина: ";
+    announce += reason;
+    HandleAnnounceCommand(announce.c_str());
 
     return true;
 }

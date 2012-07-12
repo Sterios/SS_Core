@@ -13,20 +13,20 @@ enum ActNpcRename
     ACT_CONFIRM_CUSTOMIZE_RACE_CHANGE = 1008
 };
 
-#define PRISE_RENAME_CHAR_AP    1000000000
-#define PRISE_CUSTOMIZE_CHAR_AP 500000000
-#define PRISE_CUSTOMIZE_RACE_CHAR_AP 2000000000
-#define PRISE_CUSTOMIZE_RACE_CHANGE_AP 1500000000
+#define PRISE_RENAME_CHAR_AP    500000000
+#define PRISE_CUSTOMIZE_CHAR_AP 250000000
+#define PRISE_CUSTOMIZE_RACE_CHAR_AP 1000000000
+#define PRISE_CUSTOMIZE_RACE_CHANGE_AP 750000000
 
 #define GOSSIP_RENAME_HELLO "Изменить свой ник!"
 #define GOSSIP_CUSTOMIZE_HELLO "Поменять внешность и пол!"
 #define GOSSIP_CUSTOMIZE_RACE_CHANGE_HELLO "Изменить рассу!"
 #define GOSSIP_CUSTOMIZE_RACE_HELLO "Сменить Фракцию (Альянс/Орда)!"
 
-#define GOSSIP_RENAME_CONFIRM "Cтоимость смены ника 100.000 Золотых. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу)."
-#define GOSSIP_CUSTOMIZE_CONFIRM "Стоимость смены внешнего вида и пола 50.000. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу)."
-#define GOSSIP_CUSTOMIZE_RACE_CHANGE_CONFIRM "Стоимость смены рассы 150.000 золотых. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу)."
-#define GOSSIP_CUSTOMIZE_RACE_CONFIRM "Стоимость смены фракции 200.000 золотых. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу, возможны необратимые последствия – потеря магических навыков, и одежды, обмену не подлежит)."
+#define GOSSIP_RENAME_CONFIRM "Cтоимость смены ника 50.000 Золотых. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу)."
+#define GOSSIP_CUSTOMIZE_CONFIRM "Стоимость смены внешнего вида и пола 25.000. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу)."
+#define GOSSIP_CUSTOMIZE_RACE_CHANGE_CONFIRM "Стоимость смены рассы 75.000 золотых. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу)."
+#define GOSSIP_CUSTOMIZE_RACE_CONFIRM "Стоимость смены фракции 100.000 золотых. Вас устраивает? (Требуется перезайти в игру, чтобы изменения вступили в силу, возможны необратимые последствия – потеря магических навыков, и одежды, обмену не подлежит)."
 
 #define MSG_NOT_MONEY_FOR_RENAME "Вы банкрот! Проваливайте..."
 #define MSG_COMPLETE_RENAME "Готово, теперь выйди из игры и зайди снова. Вам будет предложено ввести новое Имя!"
