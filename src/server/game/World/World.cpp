@@ -20,6 +20,7 @@
     \ingroup world
 */
 
+#include "AnticheatMgr.h"
 #include "Common.h"
 #include "DatabaseEnv.h"
 #include "Config.h"
@@ -77,6 +78,7 @@
 #include "WardenCheckMgr.h"
 #include "Warden.h"
 #include "CalendarMgr.h"
+#include "OutdoorPvPWG.h"
 
 ACE_Atomic_Op<ACE_Thread_Mutex, bool> World::m_stopEvent = false;
 uint8 World::m_ExitCode = SHUTDOWN_EXIT_CODE;
@@ -589,6 +591,7 @@ void World::LoadConfigSettings(bool reload)
     m_int_configs[CONFIG_INTERVAL_SAVE] = ConfigMgr::GetIntDefault("PlayerSaveInterval", 15 * MINUTE * IN_MILLISECONDS);
     m_int_configs[CONFIG_INTERVAL_DISCONNECT_TOLERANCE] = ConfigMgr::GetIntDefault("DisconnectToleranceInterval", 0);
     m_bool_configs[CONFIG_STATS_SAVE_ONLY_ON_LOGOUT] = ConfigMgr::GetBoolDefault("PlayerSave.Stats.SaveOnlyOnLogout", true);
+    m_int_configs[CONFIG_LFG_COST] = ConfigMgr::GetIntDefault("LFGMsg.Cost", 0);
 
     m_int_configs[CONFIG_MIN_LEVEL_STAT_SAVE] = ConfigMgr::GetIntDefault("PlayerSave.Stats.MinLevel", 0);
     if (m_int_configs[CONFIG_MIN_LEVEL_STAT_SAVE] > MAX_LEVEL)
@@ -847,6 +850,18 @@ void World::LoadConfigSettings(bool reload)
     {
         sLog->outError("MinPetitionSigns (%i) must be in range 0..9. Set to 9.", m_int_configs[CONFIG_MIN_PETITION_SIGNS]);
         m_int_configs[CONFIG_MIN_PETITION_SIGNS] = 9;
+    }
+    rate_values[RATE_PVP_RANK_EXTRA_HONOR] = ConfigMgr::GetFloatDefault("PvPRank.Rate.ExtraHonor", 1);
+    std::string s_pvp_ranks = ConfigMgr::GetStringDefault("PvPRank.HKPerRank", "10,50,100,200,450,750,1300,2000,3500,6000,9500,15000,21000,30000");
+    char *c_pvp_ranks = const_cast<char*>(s_pvp_ranks.c_str());
+    for (int i = 0; i !=HKRANKMAX; i++)
+    {
+        if (i==0)
+            pvp_ranks[0] = 0;
+        else if (i==1)
+            pvp_ranks[1] = atoi(strtok (c_pvp_ranks, ","));
+        else
+            pvp_ranks[i] = atoi(strtok (NULL, ","));
     }
 
     m_int_configs[CONFIG_GM_LOGIN_STATE]        = ConfigMgr::GetIntDefault("GM.LoginState", 2);
@@ -1171,6 +1186,12 @@ void World::LoadConfigSettings(bool reload)
     m_bool_configs[CONFIG_CHATLOG_ADDON] = ConfigMgr::GetBoolDefault("ChatLogs.Addon", false);
     m_bool_configs[CONFIG_CHATLOG_BGROUND] = ConfigMgr::GetBoolDefault("ChatLogs.Battleground", false);
 
+    //Anticheat
+    m_bool_configs[CONFIG_ANTICHEAT_ENABLE] = ConfigMgr::GetBoolDefault("Anticheat.Enable", true);
+    m_int_configs[CONFIG_ANTICHEAT_REPORTS_INGAME_NOTIFICATION] = ConfigMgr::GetIntDefault("Anticheat.ReportsForIngameWarnings", 70);
+    m_int_configs[CONFIG_ANTICHEAT_DETECTIONS_ENABLED] = ConfigMgr::GetIntDefault("Anticheat.DetectionsEnabled",31);
+    m_int_configs[CONFIG_ANTICHEAT_MAX_REPORTS_FOR_DAILY_REPORT] = ConfigMgr::GetIntDefault("Anticheat.MaxReportsForDailyReport",70);
+
     // Warden
     m_bool_configs[CONFIG_WARDEN_ENABLED]              = ConfigMgr::GetBoolDefault("Warden.Enabled", false);
     m_int_configs[CONFIG_WARDEN_NUM_MEM_CHECKS]        = ConfigMgr::GetIntDefault("Warden.NumMemChecks", 3);
@@ -1197,9 +1218,33 @@ void World::LoadConfigSettings(bool reload)
     // MySQL ping time interval
     m_int_configs[CONFIG_DB_PING_INTERVAL] = ConfigMgr::GetIntDefault("MaxPingTime", 30);
 
+    //Reset Duel Cooldown
+    m_bool_configs[CONFIG_DUEL_RESET_COOLDOWN_ON_START] = ConfigMgr::GetBoolDefault("DuelReset.Cooldown.OnStart", false);
+    m_bool_configs[CONFIG_DUEL_RESET_COOLDOWN_ON_FINISH] = ConfigMgr::GetBoolDefault("DuelReset.Cooldown.OnFinish", false);
+    m_bool_configs[CONFIG_DUEL_RESET_COOLDOWN_ONLY_IN_ELWYNN_AND_DUROTAR] = ConfigMgr::GetBoolDefault("DuelReset.Cooldown.Only.in.Elwynn.and.Durotar", false);
+    m_bool_configs[CONFIG_DUEL_RESET_COOLDOWN_RESET_ENERGY_ON_START] = ConfigMgr::GetBoolDefault("DuelReset.Cooldown.Reset.Energy.OnStart ", false);
+    m_bool_configs[CONFIG_DUEL_RESET_COOLDOWN_MAX_ENERGY_ON_START] = ConfigMgr::GetBoolDefault("DuelReset.Cooldown.Max.Energy.OnStart", false);
+
     // misc
     m_bool_configs[CONFIG_PDUMP_NO_PATHS] = ConfigMgr::GetBoolDefault("PlayerDump.DisallowPaths", true);
     m_bool_configs[CONFIG_PDUMP_NO_OVERWRITE] = ConfigMgr::GetBoolDefault("PlayerDump.DisallowOverwrite", true);
+
+    //Wintergrasp
+    m_bool_configs[CONFIG_OUTDOORPVP_WINTERGRASP_ENABLED]         = ConfigMgr::GetBoolDefault("OutdoorPvP.Wintergrasp.Enabled", true);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_SAVESTATE_PERIOD] = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.SaveState.Period", 10000);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_START_TIME]       = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.StartTime", 30);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_BATTLE_TIME]      = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.BattleTime", 30);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_INTERVAL]         = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.Interval", 150);
+    m_bool_configs[CONFIG_OUTDOORPVP_WINTERGRASP_CUSTOM_HONOR]    = ConfigMgr::GetBoolDefault("OutdoorPvP.Wintergrasp.CustomHonorRewards", false);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_WIN_BATTLE]       = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.CustomHonorBattleWin", 3000);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_LOSE_BATTLE]      = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.CustomHonorBattleLose", 1250);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_DAMAGED_TOWER]    = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.CustomHonorDamageTower", 750);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_DESTROYED_TOWER]  = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.CustomHonorDestroyedTower", 750);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_DAMAGED_BUILDING] = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.CustomHonorDamagedBuilding", 750);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_INTACT_BUILDING]  = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.CustomHonorIntactBuilding", 1500);
+    m_bool_configs[CONFIG_OUTDOORPVP_WINTERGRASP_ANTIFARM_ENABLE]  = ConfigMgr::GetBoolDefault("OutdoorPvP.Wintergrasp.Antifarm.Enable", false);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_ANTIFARM_ATK]  = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.Antifarm.Atk", 5);
+    m_int_configs[CONFIG_OUTDOORPVP_WINTERGRASP_ANTIFARM_DEF]  = ConfigMgr::GetIntDefault("OutdoorPvP.Wintergrasp.Antifarm.Def", 5);
 
     // call ScriptMgr if we're reloading the configuration
     if (reload)
@@ -2733,6 +2778,8 @@ void World::ResetDailyQuests()
 
     // change available dailies
     sPoolMgr->ChangeDailyQuests();
+
+    sAnticheatMgr->ResetDailyReportStates();
 }
 
 void World::LoadDBAllowedSecurityLevel()
@@ -2972,4 +3019,30 @@ CharacterNameData const* World::GetCharacterNameData(uint32 guid) const
         return &itr->second;
     else
         return NULL;
+}
+
+void World::SendWintergraspState()
+{
+    OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId(4197);
+
+    if (!pvpWG)
+        return;
+
+    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+    {
+        if (!itr->second || !itr->second->GetPlayer() || !itr->second->GetPlayer()->IsInWorld())
+            continue;
+
+        if (pvpWG->isWarTime()) // "Battle in progress"
+        {
+            itr->second->GetPlayer()->SendUpdateWorldState(ClockWorldState[1], uint32(time(NULL)));
+        } 
+        else // Time to next battle
+        {
+            pvpWG->SendInitWorldStatesTo(itr->second->GetPlayer());
+            itr->second->GetPlayer()->SendUpdateWorldState(ClockWorldState[1], uint32(time(NULL) + pvpWG->GetTimer()));
+            // Hide unneeded info which in center of screen
+            itr->second->GetPlayer()->SendInitWorldStates(itr->second->GetPlayer()->GetZoneId(), itr->second->GetPlayer()->GetAreaId());
+        }
+    }
 }

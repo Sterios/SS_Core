@@ -433,6 +433,23 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recv_data)
                 {
                     sScriptMgr->OnPlayerChat(_player, type, lang, msg, chn);
 
+                    if (chn->IsLFG())
+                    {
+                        uint32 lenght = 0;
+                        for (uint32 i=0; i<msg.length(); i++, lenght++)
+                        {
+                            if ((int)msg.c_str() [ i ]  & 128) i++;
+                        }
+                        uint32 cost = lenght * sWorld->getIntConfig(CONFIG_LFG_COST);
+
+                        if (_player->GetMoney() < cost)
+                        {
+                            ChatHandler(this).PSendSysMessage(LANG_NOT_ENOUGHT_MONEY);
+                            break;
+                        }
+                        _player->ModifyMoney(-(int32)cost);
+                    }
+
                     chn->Say(_player->GetGUID(), msg.c_str(), lang);
                 }
             }

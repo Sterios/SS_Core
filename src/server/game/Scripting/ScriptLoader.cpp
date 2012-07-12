@@ -16,6 +16,7 @@
  */
 
 #include "ScriptLoader.h"
+#include "AnticheatMgr.h"
 
 //examples
 void AddSC_example_creature();
@@ -23,6 +24,9 @@ void AddSC_example_escort();
 void AddSC_example_gossip_codebox();
 void AddSC_example_misc();
 void AddSC_example_commandscript();
+void AddSC_DuelReset();
+// Arena Spectator
+void AddSC_arena_spectator_script();
 
 // spells
 void AddSC_deathknight_spell_scripts();
@@ -44,6 +48,7 @@ void AddSC_holiday_spell_scripts();
 void AddSC_SmartSCripts();
 
 //Commands
+void AddSC_anticheat_commandscript();
 void AddSC_account_commandscript();
 void AddSC_achievement_commandscript();
 void AddSC_cast_commandscript();
@@ -597,6 +602,8 @@ void AddSC_outdoorpvp_na();
 void AddSC_outdoorpvp_si();
 void AddSC_outdoorpvp_tf();
 void AddSC_outdoorpvp_zm();
+void AddSC_outdoorpvp_wg();
+void AddSC_wintergrasp();
 
 // player
 void AddSC_chat_log();
@@ -609,6 +616,7 @@ void AddScripts()
     AddSpellScripts();
     AddSC_SmartSCripts();
     AddCommandScripts();
+    sAnticheatMgr->StartScripts();
 #ifdef SCRIPTS
     AddWorldScripts();
     AddEasternKingdomsScripts();
@@ -651,6 +659,7 @@ void AddSpellScripts()
 
 void AddCommandScripts()
 {
+    AddSC_anticheat_commandscript();
     AddSC_account_commandscript();
     AddSC_achievement_commandscript();
     AddSC_cast_commandscript();
@@ -1213,6 +1222,7 @@ void AddNorthrendScripts()
     AddSC_zuldrak();
     AddSC_crystalsong_forest();
     AddSC_isle_of_conquest();
+    AddSC_wintergrasp();
 #endif
 }
 
@@ -1225,6 +1235,7 @@ void AddOutdoorPvPScripts()
     AddSC_outdoorpvp_si();
     AddSC_outdoorpvp_tf();
     AddSC_outdoorpvp_zm();
+    AddSC_outdoorpvp_wg();
 #endif
 }
 
@@ -1243,6 +1254,7 @@ void AddCustomScripts()
 {
 #ifdef SCRIPTS
     /* This is where custom scripts should be added. */
-
+    AddSC_DuelReset();
+    AddSC_arena_spectator_script();
 #endif
 }

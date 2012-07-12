@@ -311,6 +311,14 @@ class ChatHandler
         bool HandleUnBanHelper(BanMode mode, char const* args);
         void HandleLearnSkillRecipesHelper(Player* player, uint32 skill_id);
 
+        //Wintergrasp^M
+        bool HandleWintergraspStatusCommand(const char *args);
+        bool HandleWintergraspStartCommand(const char *args);
+        bool HandleWintergraspStopCommand(const char *args);
+        bool HandleWintergraspEnableCommand(const char *args);
+        bool HandleWintergraspSwitchTeamCommand(const char *args);
+        bool HandleWintergraspTimerCommand(const char *args);
+
     private:
         bool _HandleGMTicketResponseAppendCommand(const char* args, bool newLine);
 

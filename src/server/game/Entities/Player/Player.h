@@ -402,6 +402,27 @@ enum PlayerFlags
     PLAYER_FLAGS_UNK31             = 0x80000000,
 };
 
+#define PLAYER_TITLE_MASK_ALLIANCE_PVP             \
+    (PLAYER_TITLE_PRIVATE | PLAYER_TITLE_CORPORAL |  \
+      PLAYER_TITLE_SERGEANT_A | PLAYER_TITLE_MASTER_SERGEANT | \
+      PLAYER_TITLE_SERGEANT_MAJOR | PLAYER_TITLE_KNIGHT | \
+      PLAYER_TITLE_KNIGHT_LIEUTENANT | PLAYER_TITLE_KNIGHT_CAPTAIN | \
+      PLAYER_TITLE_KNIGHT_CHAMPION | PLAYER_TITLE_LIEUTENANT_COMMANDER | \
+      PLAYER_TITLE_COMMANDER | PLAYER_TITLE_MARSHAL | \
+      PLAYER_TITLE_FIELD_MARSHAL | PLAYER_TITLE_GRAND_MARSHAL)
+
+#define PLAYER_TITLE_MASK_HORDE_PVP                           \
+    (PLAYER_TITLE_SCOUT | PLAYER_TITLE_GRUNT |  \
+      PLAYER_TITLE_SERGEANT_H | PLAYER_TITLE_SENIOR_SERGEANT | \
+      PLAYER_TITLE_FIRST_SERGEANT | PLAYER_TITLE_STONE_GUARD | \
+      PLAYER_TITLE_BLOOD_GUARD | PLAYER_TITLE_LEGIONNAIRE | \
+      PLAYER_TITLE_CENTURION | PLAYER_TITLE_CHAMPION | \
+      PLAYER_TITLE_LIEUTENANT_GENERAL | PLAYER_TITLE_GENERAL | \
+      PLAYER_TITLE_WARLORD | PLAYER_TITLE_HIGH_WARLORD)
+
+#define PLAYER_TITLE_MASK_ALL_PVP  \
+    (PLAYER_TITLE_MASK_ALLIANCE_PVP | PLAYER_TITLE_MASK_HORDE_PVP)
+
 // used for PLAYER__FIELD_KNOWN_TITLES field (uint64), (1<<bit_index) without (-1)
 // can't use enum for uint64 values
 #define PLAYER_TITLE_DISABLED              UI64LIT(0x0000000000000000)
@@ -1066,6 +1087,8 @@ class Player : public Unit, public GridObject<Player>
         explicit Player (WorldSession* session);
         ~Player();
 
+        //AnticheatData anticheatData;
+
         void CleanupsBeforeDelete(bool finalCleanup = true);
 
         static UpdateMask updateVisualBits;
@@ -1144,6 +1167,13 @@ class Player : public Unit, public GridObject<Player>
         bool Has310Flyer(bool checkAllSpells, uint32 excludeSpellId = 0);
         void SetHas310Flyer(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_HAS_310_FLYER; else m_ExtraFlags &= ~PLAYER_EXTRA_HAS_310_FLYER; }
         void SetPvPDeath(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_PVP_DEATH; else m_ExtraFlags &= ~PLAYER_EXTRA_PVP_DEATH; }
+        bool HaveSpectators();
+        void SendSpectatorAddonMsgToBG(SpectatorAddonMsg msg);
+        bool isSpectateCanceled() { return spectateCanceled; }
+        void CancelSpectate()     { spectateCanceled = true; }
+        Unit* getSpectateFrom()   { return spectateFrom; }
+        bool isSpectator() const  { return spectatorFlag; }
+        void SetSpectate(bool on);
 
         void GiveXP(uint32 xp, Unit* victim, float group_rate=1.0f);
         void GiveLevel(uint8 level);
@@ -1572,7 +1602,7 @@ class Player : public Unit, public GridObject<Player>
         uint64 GetSelection() const { return m_curSelection; }
         Unit* GetSelectedUnit() const;
         Player* GetSelectedPlayer() const;
-        void SetSelection(uint64 guid) { m_curSelection = guid; SetUInt64Value(UNIT_FIELD_TARGET, guid); }
+        void SetSelection(uint64 guid);
 
         uint8 GetComboPoints() const { return m_comboPoints; }
         uint64 GetComboTarget() const { return m_comboTarget; }
@@ -2046,6 +2076,7 @@ class Player : public Unit, public GridObject<Player>
         void ModifyArenaPoints(int32 value, SQLTransaction* trans = NULL);      //! If trans is specified, arena point save query will be added to trans
         uint32 GetMaxPersonalArenaRatingRequirement(uint32 minarenaslot) const;
         void SetHonorPoints(uint32 value);
+		void UpdateKnownTitles();
         void SetArenaPoints(uint32 value);
 
         //End of PvP System
@@ -2860,6 +2891,11 @@ class Player : public Unit, public GridObject<Player>
         InstanceTimeMap _instanceResetTimes;
         uint32 _pendingBindId;
         uint32 _pendingBindTimer;
+
+        // spectator system
+        bool spectatorFlag;
+        bool spectateCanceled;
+        Unit *spectateFrom;
 };
 
 void AddItemsSetItem(Player*player, Item* item);

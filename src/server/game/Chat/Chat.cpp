@@ -223,6 +223,17 @@ ChatCommand* ChatHandler::getCommandTable()
         { NULL,             0,                  false, NULL,                                                "", NULL }
     };
 
+    static ChatCommand wintergraspCommandTable[] =
+    {
+        { "status",         SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleWintergraspStatusCommand>,       "", NULL },
+        { "enable",         SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleWintergraspEnableCommand>,       "", NULL },
+        { "start",          SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleWintergraspStartCommand>,        "", NULL },
+        { "stop",           SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleWintergraspStopCommand>,         "", NULL },
+        { "switch",         SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleWintergraspSwitchTeamCommand>,   "", NULL },
+        { "timer",          SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleWintergraspTimerCommand>,        "", NULL },
+        { NULL,             0,                  false, NULL,                                               "", NULL }
+    };
+
     static ChatCommand commandTable[] =
     {
         { "lookup",         SEC_ADMINISTRATOR,  true,  NULL,                                           "", lookupCommandTable   },
@@ -234,7 +245,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "channel",        SEC_ADMINISTRATOR, true, NULL,                                             "", channelCommandTable  },
 
         { "pet",            SEC_GAMEMASTER,     false, NULL,                                           "", petCommandTable },
-        { "ticket",         SEC_MODERATOR,      false,  NULL,                                          "", ticketCommandTable },
+        { "ticket",         SEC_MODERATOR,      false, NULL,                                           "", ticketCommandTable },
 
         { "aura",           SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleAuraCommand>,                "", NULL },
         { "unaura",         SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleUnAuraCommand>,              "", NULL },
@@ -302,6 +313,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "bindsight",      SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleBindSightCommand>,           "", NULL },
         { "unbindsight",    SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleUnbindSightCommand>,         "", NULL },
         { "playall",        SEC_GAMEMASTER,  false, OldHandler<&ChatHandler::HandlePlayAllCommand>,             "", NULL },
+        { "wg",             SEC_ADMINISTRATOR,  false, NULL,                                 "", wintergraspCommandTable },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 

@@ -16,6 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "AnticheatMgr.h"
 #include "Common.h"
 #include "Language.h"
 #include "DatabaseEnv.h"
@@ -861,6 +862,10 @@ Player::Player(WorldSession* session): Unit(true), m_achievementMgr(this), m_rep
 
     m_SeasonalQuestChanged = false;
 
+    spectatorFlag = false;
+    spectateCanceled = false;
+    spectateFrom = NULL;
+
     SetPendingBind(0, 0);
 }
 
@@ -1519,6 +1524,8 @@ void Player::Update(uint32 p_time)
     if (!IsInWorld())
         return;
 
+    //sAnticheatMgr->HandleHackDetectionTimer(this, p_time);
+
     // undelivered mail
     if (m_nextMailDelivereTime && m_nextMailDelivereTime <= time(NULL))
     {
@@ -1827,6 +1834,15 @@ void Player::setDeathState(DeathState s)
             return;
         }
 
+        // send spectate addon message
+        if (HaveSpectators())
+        {
+            SpectatorAddonMsg msg;
+            msg.SetPlayer(GetName());
+            msg.SetStatus(false);
+            SendSpectatorAddonMsgToBG(msg);
+        }
+
         // drunken state is cleared on death
         SetDrunkValue(0);
         // lost combo points at any target (targeted combo points clear in Unit::setDeathState)
@@ -1860,6 +1876,20 @@ void Player::setDeathState(DeathState s)
     if (isAlive() && !cur)
         //clear aura case after resurrection by another way (spells will be applied before next death)
         SetUInt32Value(PLAYER_SELF_RES_SPELL, 0);
+}
+
+void Player::SetSelection(uint64 guid)
+{
+    m_curSelection = guid;
+    SetUInt64Value(UNIT_FIELD_TARGET, guid);
+    if (Player *target = ObjectAccessor::FindPlayer(guid))
+        if (HaveSpectators())
+        {
+            SpectatorAddonMsg msg;
+            msg.SetPlayer(GetName());
+            msg.SetTarget(target->GetName());
+            SendSpectatorAddonMsgToBG(msg);
+        }
 }
 
 bool Player::BuildEnumData(PreparedQueryResult result, WorldPacket* data)
@@ -2066,6 +2096,8 @@ void Player::SendTeleportAckPacket()
 
 bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options)
 {
+    //sAnticheatMgr->DisableAnticheatDetection(this,true);
+
     if (!MapManager::IsValidMapCoord(mapid, x, y, z, orientation))
     {
         sLog->outError("TeleportTo: invalid map (%d) or invalid coordinates (X: %f, Y: %f, Z: %f, O: %f) given when teleporting player (GUID: %u, name: %s, map: %d, X: %f, Y: %f, Z: %f, O: %f).",
@@ -2321,7 +2353,17 @@ bool Player::TeleportToBGEntryPoint()
     ScheduleDelayedOperation(DELAYED_BG_MOUNT_RESTORE);
     ScheduleDelayedOperation(DELAYED_BG_TAXI_RESTORE);
     ScheduleDelayedOperation(DELAYED_BG_GROUP_RESTORE);
-    return TeleportTo(m_bgData.joinPos);
+    Battleground *oldBg = GetBattleground();
+    bool result = TeleportTo(m_bgData.joinPos);
+
+    if (isSpectator() && result)
+    {
+        SetSpectate(false);
+        if (oldBg)
+            oldBg->RemoveSpectator(GetGUID());
+    }
+
+    return result;
 }
 
 void Player::ProcessDelayedOperations()
@@ -2781,6 +2823,97 @@ void Player::SetInWater(bool apply)
     RemoveAurasWithInterruptFlags(apply ? AURA_INTERRUPT_FLAG_NOT_ABOVEWATER : AURA_INTERRUPT_FLAG_NOT_UNDERWATER);
 
     getHostileRefManager().updateThreatTables();
+}
+
+void Player::SetSpectate(bool on)
+{
+    if (on)
+    {
+        SetSpeed(MOVE_RUN, 2.5);
+        spectatorFlag = true;
+
+        m_ExtraFlags |= PLAYER_EXTRA_GM_ON;
+        setFaction(35);
+
+        if (Pet* pet = GetPet())
+        {
+            RemovePet(pet, PET_SAVE_AS_CURRENT);
+        }
+        UnsummonPetTemporaryIfAny();
+
+        RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+        ResetContestedPvP();
+
+        getHostileRefManager().setOnlineOfflineState(false);
+        CombatStopWithPets();
+
+        // random dispay id`s
+        uint32 morphs[8] = {25900, 18718, 29348, 22235, 30414, 736, 20582, 28213};
+        SetDisplayId(morphs[urand(0, 7)]);
+
+        m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GM, SEC_ADMINISTRATOR);
+    }
+    else
+    {
+        uint32 newPhase = 0;
+        AuraEffectList const& phases = GetAuraEffectsByType(SPELL_AURA_PHASE);
+        if (!phases.empty())
+            for (AuraEffectList::const_iterator itr = phases.begin(); itr != phases.end(); ++itr)
+                newPhase |= (*itr)->GetMiscValue();
+
+        if (!newPhase)
+            newPhase = PHASEMASK_NORMAL;
+
+        SetPhaseMask(newPhase, false);
+
+        m_ExtraFlags &= ~ PLAYER_EXTRA_GM_ON;
+        setFactionForRace(getRace());
+        RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_GM);
+        RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_ALLOW_CHEAT_SPELLS);
+
+        if (spectateFrom)
+            SetViewpoint(spectateFrom, false);
+
+        // restore FFA PvP Server state
+        if (sWorld->IsFFAPvPRealm())
+            SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+
+        // restore FFA PvP area state, remove not allowed for GM mounts
+        UpdateArea(m_areaUpdateId);
+
+        getHostileRefManager().setOnlineOfflineState(true);
+        m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GM, SEC_PLAYER);
+        spectateCanceled = false;
+        spectatorFlag = false;
+        RestoreDisplayId();
+        UpdateSpeed(MOVE_RUN, true);
+    }
+    UpdateObjectVisibility();
+}
+
+bool Player::HaveSpectators()
+{
+    if (isSpectator())
+        return false;
+
+    if (Battleground *bg = GetBattleground())
+        if (bg->isArena())
+        {
+            if (bg->GetStatus() != STATUS_IN_PROGRESS)
+                return false;
+
+            return bg->HaveSpectators();
+        }
+
+    return false;
+}
+
+void Player::SendSpectatorAddonMsgToBG(SpectatorAddonMsg msg)
+{
+    if (!HaveSpectators())
+        return;
+
+    GetBattleground()->SendSpectateAddonsMsg(msg);
 }
 
 void Player::SetGameMaster(bool on)
@@ -5635,6 +5768,10 @@ void Player::RepopAtGraveyard()
 
 bool Player::CanJoinConstantChannelInZone(ChatChannelsEntry const* channel, AreaTableEntry const* zone)
 {
+    // Player can join LFG anywhere
+    if (channel->flags & CHANNEL_DBC_FLAG_LFG)
+	return true;
+
     if (channel->flags & CHANNEL_DBC_FLAG_ZONE_DEP && zone->flags & AREA_FLAG_ARENA_INSTANCE)
         return false;
 
@@ -7210,6 +7347,7 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, int32 honor, bool pvpt
 
     uint64 victim_guid = 0;
     uint32 victim_rank = 0;
+	uint32 rank_diff = 0;
 
     // need call before fields update to have chance move yesterday data to appropriate fields before today data change.
     UpdateHonorFields();
@@ -7254,17 +7392,54 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, int32 honor, bool pvpt
             //  title[1..14]  -> rank[5..18]
             //  title[15..28] -> rank[5..18]
             //  title[other]  -> 0
-            if (victim_title == 0)
-                victim_guid = 0;                        // Don't show HK: <rank> message, only log.
-            else if (victim_title < 15)
-                victim_rank = victim_title + 4;
-            else if (victim_title < 29)
-                victim_rank = victim_title - 14 + 4;
-            else
-                victim_guid = 0;                        // Don't show HK: <rank> message, only log.
+                // PLAYER__FIELD_KNOWN_TITLES describe which titles player can use,
+                // so we must find biggest pvp title , even for killer to find extra honor value
+                uint32 vtitle = victim->GetUInt32Value(PLAYER__FIELD_KNOWN_TITLES);
+                //uint32 victim_title = 0;
+                uint32 ktitle = GetUInt32Value(PLAYER__FIELD_KNOWN_TITLES);
+                uint32 killer_title = 0;
+                if (PLAYER_TITLE_MASK_ALL_PVP & ktitle)
+                {
+                    for (int i = ((GetTeam() == ALLIANCE) ? 1:HKRANKMAX);i!=((GetTeam() == ALLIANCE) ? HKRANKMAX : (2*HKRANKMAX-1));i++)
+                    {
+                        if (ktitle & (1<<i))
+                            killer_title = i;
+                    }
+                }
+                if (PLAYER_TITLE_MASK_ALL_PVP & vtitle)
+                {
+                    for (int i = ((victim->GetTeam() == ALLIANCE) ? 1:HKRANKMAX);i!=((victim->GetTeam() == ALLIANCE) ? HKRANKMAX : (2*HKRANKMAX-1));i++)
+                    {
+                        if (vtitle & (1<<i))
+                            victim_title = i;
+                    }
+                }
+
+                // Get Killer titles, CharTitlesEntry::bit_index
+                // Ranks:
+                //  title[1..14]  -> rank[5..18]
+                //  title[15..28] -> rank[5..18]
+                //  title[other]  -> 0
+                if (victim_title == 0)
+                    victim_guid = 0;                        // Don't show HK: <rank> message, only log.
+                else if (victim_title < HKRANKMAX)
+                    victim_rank = victim_title + 4;
+                else if (victim_title < (2*HKRANKMAX-1))
+                    victim_rank = victim_title - (HKRANKMAX-1) + 4;
+                else
+                    victim_guid = 0;                        // Don't show HK: <rank> message, only log.
+
+                // now find rank difference
+                if (killer_title == 0 && victim_rank>4)
+                    rank_diff = victim_rank - 4;
+                else if (killer_title < HKRANKMAX)
+                    rank_diff = (victim_rank>(killer_title + 4))? (victim_rank - (killer_title + 4)) : 0;
+                else if (killer_title < (2*HKRANKMAX-1))
+                    rank_diff = (victim_rank>(killer_title - (HKRANKMAX-1) +4))? (victim_rank - (killer_title - (HKRANKMAX-1) + 4)) : 0;
+
 
             honor_f = ceil(Trinity::Honor::hk_honor_at_level_f(k_level) * (v_level - k_grey) / (k_level - k_grey));
-
+			honor *= 1 + sWorld->getRate(RATE_PVP_RANK_EXTRA_HONOR)*(((float)rank_diff) / 10.0f);
             // count the number of playerkills in one day
             ApplyModUInt32Value(PLAYER_FIELD_KILLS, 1, true);
             // and those in a lifetime
@@ -7272,6 +7447,7 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, int32 honor, bool pvpt
             UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_EARN_HONORABLE_KILL);
             UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HK_CLASS, victim->getClass());
             UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HK_RACE, victim->getRace());
+                       UpdateKnownTitles();
             UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HONORABLE_KILL_AT_AREA, GetAreaId());
             UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HONORABLE_KILL, 1, 0, victim);
         }
@@ -7363,6 +7539,30 @@ void Player::SetArenaPoints(uint32 value)
     SetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY, value);
     if (value)
         AddKnownCurrency(ITEM_ARENA_POINTS_ID);
+}
+
+void Player::UpdateKnownTitles()
+{
+    uint32 new_title = 0;
+    uint32 honor_kills = GetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS);
+    uint32 old_title = GetUInt32Value(PLAYER_CHOSEN_TITLE);
+    RemoveFlag64(PLAYER__FIELD_KNOWN_TITLES,PLAYER_TITLE_MASK_ALL_PVP);
+    if (honor_kills < 0)
+        return;
+    bool max_rank = ((honor_kills >= sWorld->pvp_ranks[HKRANKMAX-1]) ? true : false);
+    for (int i = HKRANK01; i != HKRANKMAX; ++i)
+    {
+        if (honor_kills < sWorld->pvp_ranks[i] || (max_rank))
+        {
+            new_title = ((max_rank) ? (HKRANKMAX-1) : (i-1));
+            if (new_title > 0)
+                new_title += ((GetTeam() == ALLIANCE) ? 0 : (HKRANKMAX-1));
+            break;
+        }
+    }
+    SetFlag64(PLAYER__FIELD_KNOWN_TITLES,uint64(1) << new_title);
+    if (old_title > 0 && old_title < (2*HKRANKMAX-1) && new_title > old_title)
+        SetUInt32Value(PLAYER_CHOSEN_TITLE,new_title);
 }
 
 void Player::ModifyHonorPoints(int32 value, SQLTransaction* trans /*=NULL*/)
@@ -18965,6 +19165,12 @@ void Player::SaveToDB(bool create /*=false*/)
 
     CharacterDatabase.CommitTransaction(trans);
 
+    // we save the data here to prevent spamming
+    sAnticheatMgr->SavePlayerData(this);
+
+    // in this way we prevent to spam the db by each report made!
+    // sAnticheatMgr->SavePlayerData(this);
+
     // save pet (hunter pet level and experience and all type pets health/mana).
     if (Pet* pet = GetPet())
         pet->SavePetToDB(PET_SAVE_AS_CURRENT);
@@ -22574,6 +22780,31 @@ void Player::SendAurasForTarget(Unit* target)
         auraApp->BuildUpdatePacket(data, false);
     }
 
+    if (Player *stream = target->ToPlayer())
+        if (stream->HaveSpectators() && isSpectator())
+        {
+            for (Unit::VisibleAuraMap::const_iterator itr = visibleAuras->begin(); itr != visibleAuras->end(); ++itr)
+            {
+                AuraApplication * auraApp = itr->second;
+                auraApp->BuildUpdatePacket(data, false);
+                if (Aura* aura = auraApp->GetBase())
+                {
+                    SpectatorAddonMsg msg;
+                    uint64 casterID = 0;
+                    if (aura->GetCaster())
+                        casterID = (aura->GetCaster()->ToPlayer()) ? aura->GetCaster()->GetGUID() : 0;
+                    msg.SetPlayer(stream->GetName());
+                    msg.CreateAura(casterID, aura->GetSpellInfo()->Id,
+                                   aura->GetSpellInfo()->IsPositive(), aura->GetSpellInfo()->Dispel,
+                                   aura->GetDuration(), aura->GetMaxDuration(),
+                                   aura->GetStackAmount(), false);
+                    msg.SendPacket(GetGUID());
+                }
+
+            }
+
+        }
+
     GetSession()->SendPacket(&data);
 }
 
@@ -23566,6 +23797,16 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
 {
     if (apply)
     {
+        if (target->ToPlayer() == this)
+            return;
+
+        //remove Viewpoint if already have
+        if (isSpectator() && spectateFrom)
+        {
+            SetViewpoint(spectateFrom, false);
+            spectateFrom = NULL;
+        }
+
         sLog->outDebug(LOG_FILTER_MAPS, "Player::CreateViewpoint: Player %s create seer %u (TypeId: %u).", GetName(), target->GetEntry(), target->GetTypeId());
 
         if (!AddUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
@@ -23578,10 +23819,18 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
         UpdateVisibilityOf(target);
 
         if (target->isType(TYPEMASK_UNIT) && !GetVehicle())
+        {
+            if (isSpectator())
+                spectateFrom = (Unit*)target;
+
             ((Unit*)target)->AddPlayerToVision(this);
+        }
     }
     else
     {
+        if (isSpectator() && !spectateFrom)
+            return;
+
         sLog->outDebug(LOG_FILTER_MAPS, "Player::CreateViewpoint: Player %s remove seer", GetName());
 
         if (!RemoveUInt64Value(PLAYER_FARSIGHT, target->GetGUID()))
@@ -23592,6 +23841,9 @@ void Player::SetViewpoint(WorldObject* target, bool apply)
 
         if (target->isType(TYPEMASK_UNIT) && !GetVehicle())
             ((Unit*)target)->RemovePlayerFromVision(this);
+
+        if (isSpectator())
+            spectateFrom = NULL;
 
         //must immediately set seer back otherwise may crash
         m_seer = this;
