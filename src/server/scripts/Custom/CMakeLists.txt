@@ -13,6 +13,7 @@ set(scripts_STAT_SRCS
   Custom/npc_customize.cpp
   Custom/duel_reset.cpp
   Custom/arena_spectator.cpp
+  Custom/mob_resurrect.cpp
 )
 
 message("  -> Prepared: Custom")
