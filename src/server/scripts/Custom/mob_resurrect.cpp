@@ -1,14 +1,14 @@
 #include "ScriptPCH.h"
 #include "Player.h"
 
-const Position allyPositions[1] =
+const Position duelareaPositions[1] =
 {
     { -1027.197632f, 1577.646851f, 53.460976f, 0.022043f }
 };
 
-const Position hordePositions[1] =
+const Position jumpsPositions[1] =
 {
-    { -1027.197632f, 1577.646851f, 53.460976f, 0.022043f }
+    { -4795.683105f, -4482.359863f, 121.690331f, 3.077888f }
 };
 
 class mob_resurrect : public PlayerScript
@@ -18,7 +18,7 @@ public:
 
     void OnPVPKill(Player*/*Creature* */ killer, Player* killed)
     {
-        if (killer->GetAreaId() == 2397) /*&& killed->GetMapId() == 0*/
+        if (killer->GetAreaId() == 2397 || killer->GetAreaId() == 2318)/* && killed->GetMapId() == 1)*/
         {
             if (killed->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
                 killed->RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
@@ -34,10 +34,10 @@ public:
                 aur->SetDuration(1*MINUTE*IN_MILLISECONDS); // 1 Минута Божественный щит
 
             uint32 rnd = urand(0,1);
-            if (killed->GetTeam() == ALLIANCE)
-                killed->TeleportTo(0, allyPositions[rnd].GetPositionX(), allyPositions[rnd].GetPositionY(), allyPositions[rnd].GetPositionZ(), allyPositions[rnd].GetOrientation());
-            else
-                killed->TeleportTo(0, hordePositions[rnd].GetPositionX(), hordePositions[rnd].GetPositionY(), hordePositions[rnd].GetPositionZ(), hordePositions[rnd].GetOrientation());
+            if (killed->GetAreaId() == 2397)
+                killed->TeleportTo(0, duelareaPositions[rnd].GetPositionX(), duelareaPositions[rnd].GetPositionY(), duelareaPositions[rnd].GetPositionZ(), duelareaPositions[rnd].GetOrientation());
+            if (killed->GetAreaId() == 2318)
+                killed->TeleportTo(1, jumpsPositions[rnd].GetPositionX(), jumpsPositions[rnd].GetPositionY(), jumpsPositions[rnd].GetPositionZ(), jumpsPositions[rnd].GetOrientation());
         }
     }
 };

@@ -35,7 +35,7 @@ PathFinderMovementGenerator::PathFinderMovementGenerator(const Unit* owner) :
     sLog->outDebug(LOG_FILTER_MAPS, "++ PathFinderMovementGenerator::PathFinderMovementGenerator for %u \n", m_sourceUnit->GetGUIDLow());
 
     uint32 mapId = m_sourceUnit->GetMapId();
-    if (MMAP::MMapFactory::IsPathfindingEnabled(mapId))
+    if (mapId && sWorld->getBoolConfig(CONFIG_ENABLE_MMAPS))
     {
         MMAP::MMapManager* mmap = MMAP::MMapFactory::createOrGetMMapManager();
         m_navMesh = mmap->GetNavMesh(mapId);

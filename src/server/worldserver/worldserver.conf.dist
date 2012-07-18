@@ -1772,6 +1772,13 @@ AllowTwoSide.Accounts = 1
 AllowTwoSide.Interaction.Chat = 0
 
 #
+#    AllowTwoSide.Interaction.Chat.Area
+#        Description: Allow say chat between factions on specific area.
+#        Default:     -1 - (Disabled)
+
+AllowTwoSide.Interaction.Chat.Area = -1
+
+#
 #    AllowTwoSide.Interaction.Channel
 #        Description: Allow channel chat between factions.
 #        Default:     0 - (Disabled)

@@ -36,12 +36,6 @@ namespace MMAP
         return g_MMapManager;
     }
 
-    bool MMapFactory::IsPathfindingEnabled(uint32 mapId)
-    {
-        if (DisableMgr::IsDisabledFor(DISABLE_TYPE_MAP, mapId, NULL))
-            return sWorld->getBoolConfig(CONFIG_ENABLE_MMAPS);
-    }
-
     void MMapFactory::clear()
     {
         if (g_MMapManager)
