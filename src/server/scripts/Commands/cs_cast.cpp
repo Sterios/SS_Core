@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "ScriptMgr.h"
 #include "Chat.h"
+#include <algorithm>
 
 class cast_commandscript : public CommandScript
 {
@@ -33,11 +34,12 @@ public:
     ChatCommand* GetCommands() const
     {
         static ChatCommand castCommandTable[] =
-        {   
+        {
             { "back",           SEC_ADMINISTRATOR,  false, &HandleCastBackCommand,              "", NULL },
             { "dist",           SEC_ADMINISTRATOR,  false, &HandleCastDistCommand,              "", NULL },
             { "self",           SEC_ADMINISTRATOR,  false, &HandleCastSelfCommand,              "", NULL },
-            { "target",         SEC_ADMINISTRATOR,  false, &HandleCastTargetCommad,             "", NULL },
+            { "target",         SEC_ADMINISTRATOR,  false, &HandleCastTargetCommand,            "", NULL },
+            { "random",         SEC_ADMINISTRATOR,  false, &HandleCastRandomCommand,            "", NULL },
             { "dest",           SEC_ADMINISTRATOR,  false, &HandleCastDestCommand,              "", NULL },
             { "",               SEC_ADMINISTRATOR,  false, &HandleCastCommand,                  "", NULL },
             { NULL,             0,                  false, NULL,                                "", NULL }
@@ -254,6 +256,49 @@ public:
         bool triggered = (triggeredStr != NULL);
 
         caster->CastSpell(caster->getVictim(), spellId, triggered);
+
+        return true;
+    }
+
+    static bool HandleCastRandomCommand(ChatHandler* handler, char const* args)
+    {
+        const char spelllist[] = {};
+
+        Creature* caster = handler->getSelectedCreature();
+        if (!caster)
+        {
+            handler->SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        if (!caster->getVictim())
+        {
+            handler->SendSysMessage(LANG_SELECTED_TARGET_NOT_HAVE_VICTIM);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        // number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
+        uint32 spellId = handler->extractSpellIdFromLink((char*)args);
+        if (!spellId || !sSpellMgr->GetSpellInfo(spellId))
+        {
+            handler->PSendSysMessage(LANG_COMMAND_NOSPELLFOUND);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        char* triggeredStr = strtok(NULL, " ");
+        if (triggeredStr)
+        {
+            int l = strlen(triggeredStr);
+            if (strncmp(triggeredStr, "triggered", l) != 0)
+                return false;
+        }
+
+        bool triggered = (triggeredStr != NULL);
+
+        caster->CastSpell(caster->getVictim(), random_shuffle(&spelllist[0], &spelllist[24]), triggered);
 
         return true;
     }

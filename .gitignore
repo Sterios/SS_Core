@@ -4,6 +4,10 @@ build*/
 .mailmap
 *.orig
 *.rej
+*.save
+*.cbp
+*.layout
+*.depend
 *~
 .hg/
 *.kdev*
