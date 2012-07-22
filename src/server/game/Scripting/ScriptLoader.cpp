@@ -614,6 +614,7 @@ void AddSC_wintergrasp();
 // player
 void AddSC_lexics_chat_log();
 
+void AddSC_NPC_Transmogrify();
 #endif
 
 void AddScripts()
@@ -1257,6 +1258,7 @@ void AddCustomScripts()
 {
 #ifdef SCRIPTS
     /* This is where custom scripts should be added. */
+    AddSC_NPC_Transmogrify();
     AddSC_npc_customize();
     AddSC_DuelReset();
     AddSC_arena_spectator_script();
