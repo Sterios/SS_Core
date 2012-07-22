@@ -219,7 +219,7 @@ public:
         return true;
     }
 
-    static bool HandleCastTargetCommad(ChatHandler* handler, char const* args)
+    static bool HandleCastTargetCommand(ChatHandler* handler, char const* args)
     {
         Creature* caster = handler->getSelectedCreature();
         if (!caster)
@@ -298,7 +298,7 @@ public:
 
         bool triggered = (triggeredStr != NULL);
 
-        caster->CastSpell(caster->getVictim(), random_shuffle(&spelllist[0], &spelllist[24]), triggered);
+        caster->CastSpell(caster->getVictim(), spellId /*random_shuffle(&spelllist[0], &spelllist[24])*/, triggered);
 
         return true;
     }
