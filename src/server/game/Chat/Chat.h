@@ -131,14 +131,6 @@ class ChatHandler
         bool ExecuteCommandInTable(ChatCommand* table, const char* text, const std::string& fullcmd);
         bool ShowHelpForSubCommands(ChatCommand* table, char const* cmd, char const* subcmd);
 
-        bool HandlePossessCommand(const char* args);
-        bool HandleUnPossessCommand(const char* args);
-        bool HandleBindSightCommand(const char* args);
-        bool HandleUnbindSightCommand(const char* args);
-
-        bool HandlePDumpLoadCommand(const char *args);
-        bool HandlePDumpWriteCommand(const char *args);
-
         bool HandleResetAchievementsCommand(const char * args);
         bool HandleResetAllCommand(const char * args);
         bool HandleResetHonorCommand(const char * args);
@@ -146,12 +138,6 @@ class ChatHandler
         bool HandleResetSpellsCommand(const char* args);
         bool HandleResetStatsCommand(const char * args);
         bool HandleResetTalentsCommand(const char* args);
-
-        bool HandleGroupLeaderCommand(const char* args);
-        bool HandleGroupDisbandCommand(const char* args);
-        bool HandleGroupRemoveCommand(const char* args);
-
-        bool HandlePlayAllCommand(const char* args);
 
         //Wintergrasp
         bool HandleWintergraspStatusCommand(const char *args);
