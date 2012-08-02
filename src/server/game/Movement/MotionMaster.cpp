@@ -210,8 +210,11 @@ void MotionMaster::MoveTargetedHome()
         Unit *target = ((Creature*)_owner)->GetCharmerOrOwner();
         if (target)
         {
-            sLog->outStaticDebug("Following %s (GUID: %u)", target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature", target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : ((Creature*)target)->GetDBTableGUIDLow());
-            Mutate(new FollowMovementGenerator<Creature>(*target,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE), MOTION_SLOT_ACTIVE);
+            if (!_owner->m_movedPlayer)
+            {
+                sLog->outStaticDebug("Following %s (GUID: %u)", target->GetTypeId() == TYPEID_PLAYER ? "player" : "creature", target->GetTypeId() == TYPEID_PLAYER ? target->GetGUIDLow() : ((Creature*)target)->GetDBTableGUIDLow());
+                Mutate(new FollowMovementGenerator<Creature>(*target,PET_FOLLOW_DIST,PET_FOLLOW_ANGLE), MOTION_SLOT_ACTIVE);
+            }
         }
     }
     else
@@ -338,15 +341,39 @@ void MotionMaster::MoveKnockbackFrom(float srcX, float srcY, float speedXY, floa
     float dist = 2 * moveTimeHalf * speedXY;
     float max_height = -Movement::computeFallElevation(moveTimeHalf,false,-speedZ);
 
-    _owner->GetNearPoint(_owner, x, y, z, _owner->GetObjectSize(), dist, _owner->GetAngle(srcX, srcY) + M_PI);
+    for (uint8 i = 0; i < 5; ++i)
+    {
+        switch (i)
+        {
+            case 0:
+                _owner->GetNearPoint(_owner, x, y, z, _owner->GetObjectSize(), dist, _owner->GetAngle(srcX, srcY) + M_PI);
+                break;
+            case 1:
+                _owner->GetNearPoint(_owner, x, y, z, _owner->GetObjectSize(), dist*0.8, _owner->GetAngle(srcX, srcY) + M_PI);
+                break;
+            case 2:
+                _owner->GetNearPoint(_owner, x, y, z, _owner->GetObjectSize(), dist*0.5, _owner->GetAngle(srcX, srcY) + M_PI);
+                break;
+            case 3:
+                _owner->GetNearPoint(_owner, x, y, z, _owner->GetObjectSize(), dist*0.25, _owner->GetAngle(srcX, srcY) + M_PI);
+                break;
+            case 4:
+                _owner->GetNearPoint(_owner, x, y, z, _owner->GetObjectSize(), dist*0.1, _owner->GetAngle(srcX, srcY) + M_PI);
+                break;
+        }
 
-    Movement::MoveSplineInit init(*_owner);
-    init.MoveTo(x,y,z);
-    init.SetParabolic(max_height,0);
-    init.SetOrientationFixed(true);
-    init.SetVelocity(speedXY);
-    init.Launch();
-    Mutate(new EffectMovementGenerator(0), MOTION_SLOT_CONTROLLED);
+        if (_owner->IsWithinLOS(x, y, z))
+        {
+            Movement::MoveSplineInit init(*_owner);
+            init.MoveTo(x,y,z);
+            init.SetParabolic(max_height,0);
+            init.SetOrientationFixed(true);
+            init.SetVelocity(speedXY);
+            init.Launch();
+            Mutate(new EffectMovementGenerator(0), MOTION_SLOT_CONTROLLED);
+            break;
+        }
+    }
 }
 
 void MotionMaster::MoveJumpTo(float angle, float speedXY, float speedZ)
@@ -382,6 +409,13 @@ void MotionMaster::MoveFall(uint32 id/*=0*/)
 {
     // use larger distance for vmap height search than in most other cases
     float tz = _owner->GetMap()->GetHeight(_owner->GetPhaseMask(), _owner->GetPositionX(), _owner->GetPositionY(), _owner->GetPositionZ(), true, MAX_FALL_DISTANCE);
+
+    if (tz <= INVALID_HEIGHT)
+    {
+        // try fall down to ground
+        tz = _owner->GetMap()->GetHeight(_owner->GetPhaseMask(), _owner->GetPositionX(), _owner->GetPositionY(), _owner->GetPositionZ(), false, MAX_FALL_DISTANCE);
+    }
+
     if (tz <= INVALID_HEIGHT)
     {
         sLog->outStaticDebug("MotionMaster::MoveFall: unable retrive a proper height at map %u (x: %f, y: %f, z: %f).",

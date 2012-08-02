@@ -72,16 +72,23 @@ bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 
             float x = i_x + 10.0f*((float)rand_norm() - 0.5f);
             float y = i_y + 10.0f*((float)rand_norm() - 0.5f);
-            float z = i_z;
+            float z = i_z + 0.5f;
+
+            Trinity::NormalizeMapCoord(x);
+            Trinity::NormalizeMapCoord(y);
 
             unit.UpdateAllowedPositionZ(x, y, z);
 
+            if (z <= INVALID_HEIGHT)
+                i_z = unit.GetBaseMap()->GetHeight(unit.GetPhaseMask(), x, y, MAX_HEIGHT) + 2.0f;
+
             PathFinderMovementGenerator path(&unit);
             path.setPathLengthLimit(30.0f);
-            path.calculate(x, y, z);
-            if (path.getPathType() & PATHFIND_NOPATH)
+            path.setUseStrightPath(false);
+
+            if (!unit.IsWithinLOS(x, y, z) || !path.calculate(x, y, z) || path.getPathType() & PATHFIND_NOPATH)
             {
-                i_nextMoveTime.Reset(urand(800, 1000));
+                i_nextMoveTime.Reset(urand(200, 500));
                 return true;
             }
 
