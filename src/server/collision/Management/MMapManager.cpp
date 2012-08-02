@@ -145,8 +145,14 @@ namespace MMAP
         dtMeshHeader* header = (dtMeshHeader*)data;
         dtTileRef tileRef = 0;
 
+        dtStatus stat;
+
+        {
+            TRINITY_WRITE_GUARD(ACE_RW_Thread_Mutex, i_tileLock);
+            stat = mmap->navMesh->addTile(data, fileHeader.size, DT_TILE_FREE_DATA, 0, &tileRef);
+        }
         // memory allocated for data is now managed by detour, and will be deallocated when the tile is removed
-        if (DT_SUCCESS == mmap->navMesh->addTile(data, fileHeader.size, DT_TILE_FREE_DATA, 0, &tileRef))
+        if (stat == DT_SUCCESS)
         {
             mmap->mmapLoadedTiles.insert(std::pair<uint32, dtTileRef>(packedGridPos, tileRef));
             ++loadedTiles;
@@ -186,8 +192,14 @@ namespace MMAP
 
         dtTileRef tileRef = mmap->mmapLoadedTiles[packedGridPos];
 
+        dtStatus status;
         // unload, and mark as non loaded
-        if (DT_SUCCESS != mmap->navMesh->removeTile(tileRef, NULL, NULL))
+        {
+            TRINITY_WRITE_GUARD(ACE_RW_Thread_Mutex, i_tileLock);
+            status = mmap->navMesh->removeTile(tileRef, NULL, NULL);
+        }
+
+        if (status != DT_SUCCESS)
         {
             // this is technically a memory leak
             // if the grid is later reloaded, dtNavMesh::addTile will return error but no extra memory is used
