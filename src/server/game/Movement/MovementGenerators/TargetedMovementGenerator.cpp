@@ -26,7 +26,8 @@
 #include "MoveSpline.h"
 #include "Player.h"
 
-#define RECHECK_DISTANCE_TIMER 50
+#define RECHECK_DISTANCE_TIMER 100
+#define TARGET_NOT_ACCESSIBLE_MAX_TIMER 5000
 
 template<class T, typename D>
 void TargetedMovementGeneratorMedium<T,D>::_setTargetLocation(T &owner)
@@ -37,20 +38,26 @@ void TargetedMovementGeneratorMedium<T,D>::_setTargetLocation(T &owner)
     if (owner.HasUnitState(UNIT_STATE_NOT_MOVE))
         return;
 
+    if (owner.GetTypeId() == TYPEID_UNIT && !i_target->isInAccessiblePlaceFor(((Creature*)&owner)))
+        return;
+
     float x, y, z;
+    bool targetIsVictim = owner.getVictim() && owner.getVictim()->GetGUID() == i_target->GetGUID();
 
     if (!i_offset)
     {
-        if (i_target->IsWithinMeleeRange(&owner))
-            return;
+        // to nearest contact position
+        float dist = 0.0f;
+        if (targetIsVictim)
+            dist = owner.GetFloatValue(UNIT_FIELD_COMBATREACH) + i_target->GetFloatValue(UNIT_FIELD_COMBATREACH) - i_target->GetObjectSize() - owner.GetObjectSize() - 1.0f;
 
-        // to nearest random contact position
-        i_target->GetRandomContactPoint(&owner, x, y, z, 0, MELEE_RANGE - 0.5f);
+        if (dist < 0.5f)
+            dist = 0.5f;
+
+        i_target->GetContactPoint(&owner, x, y, z, dist);
     }
     else
     {
-        if (i_target->IsWithinDistInMap(&owner, i_offset + 1.0f))
-            return;
         // to at i_offset distance from target and i_angle from target facing
         i_target->GetClosePoint(x, y, z, owner.GetObjectSize(), i_offset, i_angle);
     }
@@ -105,10 +112,18 @@ template<class T, typename D>
 bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_diff)
 {
     if (!i_target.isValid() || !i_target->IsInWorld())
-        return false;
+    {
+        if (i_targetSearchingTimer >= TARGET_NOT_ACCESSIBLE_MAX_TIMER)
+            return false;
+        else
+        {
+            i_targetSearchingTimer += time_diff;
+            return true;
+        }
+    }
 
     if (!owner.isAlive())
-        return true;
+        return false;
 
     if (owner.HasUnitState(UNIT_STATE_NOT_MOVE))
     {
@@ -120,7 +135,19 @@ bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_
     if (owner.HasUnitState(UNIT_STATE_CASTING))
     {
         if (!owner.IsStopped())
-            owner.StopMoving();
+        {
+            // some spells should be able to be cast while moving
+            // maybe some attribute? here, check the entry of creatures useing these spells
+            switch(owner.GetEntry())
+            {
+                case 36633: // Ice Sphere (Lich King)
+                case 37562: // Volatile Ooze and Gas Cloud (Putricide)
+                case 37697:
+                    break;
+                default:
+                    owner.StopMoving();
+            }
+        }
         return true;
     }
 
@@ -128,7 +155,13 @@ bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_
     if (static_cast<D*>(this)->_lostTarget(owner))
     {
         D::_clearUnitStateMove(owner);
-        return true;
+        if (i_targetSearchingTimer >= TARGET_NOT_ACCESSIBLE_MAX_TIMER)
+            return false;
+        else
+        {
+            i_targetSearchingTimer += time_diff;
+            return true;
+        }
     }
 
     i_recheckDistance.Update(time_diff);
@@ -136,14 +169,47 @@ bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_
     {
         i_recheckDistance.Reset(RECHECK_DISTANCE_TIMER);
 
-        float allowedDist = owner.GetObjectSize() + MELEE_RANGE - 0.5f;
         G3D::Vector3 dest = owner.movespline->FinalDestination();
+        float allowed_dist = 0.0f;
+        bool targetIsVictim = owner.getVictim() && owner.getVictim()->GetGUID() == i_target->GetGUID();
+        if (targetIsVictim)
+            allowed_dist = owner.GetMeleeReach() + owner.getVictim()->GetMeleeReach()/* + owner.getVictim()->GetObjectSize()*/;
+        else
+            allowed_dist = i_target->GetObjectSize() + owner.GetObjectSize() + sWorld->getRate(RATE_TARGET_POS_RECALCULATION_RANGE);
+
+        if (allowed_dist < owner.GetObjectSize())
+            allowed_dist = owner.GetObjectSize();
 
         bool targetMoved = false;
         if (owner.GetTypeId() == TYPEID_UNIT && ((Creature*)&owner)->IsFlying())
-            targetMoved = !i_target->IsWithinDist3d(dest.x, dest.y, dest.z, allowedDist);
+            targetMoved = !i_target->IsWithinDist3d(dest.x, dest.y, dest.z, allowed_dist);
         else
-            targetMoved = !i_target->IsWithinDist2d(dest.x, dest.y, allowedDist);
+            targetMoved = !i_target->IsWithinDist2d(dest.x, dest.y, allowed_dist);
+
+        if (targetIsVictim && owner.GetTypeId() == TYPEID_UNIT && !((Creature*)&owner)->isPet())
+        {
+            if ((!owner.getVictim() || !owner.getVictim()->isAlive()) && owner.movespline->Finalized())
+                return false;
+
+            if (!i_offset && owner.movespline->Finalized() && !owner.IsWithinMeleeRange(owner.getVictim())
+                && !i_target->m_movementInfo.HasMovementFlag(MOVEMENTFLAG_PENDING_STOP))
+            {
+                if (i_targetSearchingTimer >= TARGET_NOT_ACCESSIBLE_MAX_TIMER)
+                {
+                    owner.DeleteFromThreatList(owner.getVictim());
+                    return false;
+                }
+                else
+                {
+                    i_targetSearchingTimer += time_diff;
+                    targetMoved = true;
+                }
+            }
+            else
+                i_targetSearchingTimer = 0;
+        }
+        else
+            i_targetSearchingTimer = 0;
 
         if (targetMoved)
             _setTargetLocation(owner);

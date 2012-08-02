@@ -1969,6 +1969,7 @@ class Unit : public WorldObject
         void AddThreat(Unit* victim, float fThreat, SpellSchoolMask schoolMask = SPELL_SCHOOL_MASK_NORMAL, SpellInfo const* threatSpell = NULL);
         float ApplyTotalThreatModifier(float fThreat, SpellSchoolMask schoolMask = SPELL_SCHOOL_MASK_NORMAL);
         void DeleteThreatList();
+        void DeleteFromThreatList(Unit* victim);
         void TauntApply(Unit* victim);
         void TauntFadeOut(Unit* taunter);
         ThreatManager& getThreatManager() { return m_ThreatManager; }

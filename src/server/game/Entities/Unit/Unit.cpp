@@ -12928,6 +12928,20 @@ void Unit::DeleteThreatList()
 
 //======================================================================
 
+void Unit::DeleteFromThreatList(Unit* victim)
+{
+    if (CanHaveThreatList() && !m_ThreatManager.isThreatListEmpty())
+    {
+        // remove unreachable target from our threat list
+        // next tick we will select next possible target
+        m_HostileRefManager.deleteReference(victim);
+        m_ThreatManager.modifyThreatPercent(victim, -101);
+       // _removeAttacker(victim);
+    }
+}
+
+//======================================================================
+
 void Unit::TauntApply(Unit* taunter)
 {
     ASSERT(GetTypeId() == TYPEID_UNIT);
