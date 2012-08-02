@@ -26,7 +26,7 @@
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
 
-#define RUNNING_CHANCE_RANDOMMV 20                                  //will be "1 / RUNNING_CHANCE_RANDOMMV"
+#define RUNNING_CHANCE_RANDOMMV 5                                  //will be "1 / RUNNING_CHANCE_RANDOMMV"
 
 #ifdef MAP_BASED_RAND_GEN
 #define rand_norm() creature.rand_norm()
@@ -40,12 +40,10 @@ void RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
     Map const* map = creature.GetBaseMap();
 
     // For 2D/3D system selection
-    //bool is_land_ok  = creature.CanWalk();                // not used?
-    //bool is_water_ok = creature.CanSwim();                // not used?
     bool is_air_ok = creature.CanFly();
 
     const float angle = float(rand_norm()) * static_cast<float>(M_PI*2.0f);
-    const float range = float(rand_norm()) * wander_distance;
+    const float range = float(rand_norm()) * wander_distance * (is_air_ok ? 4.0f : 2.0f);
     const float distanceX = range * cos(angle);
     const float distanceY = range * sin(angle);
 
@@ -96,17 +94,25 @@ void RandomMovementGenerator<Creature>::_setRandomLocation(Creature& creature)
         }
     }
 
+    PathFinderMovementGenerator path(&creature);
+
+    if (!path.calculate(destX, destY, destZ) || path.getPathType() & PATHFIND_NOPATH)
+    {
+        i_nextMoveTime.Reset(urand(500, 1500));
+        return;
+    }
+
+    creature.AddUnitState(UNIT_STATE_ROAMING | UNIT_STATE_ROAMING_MOVE);
+
+    Movement::MoveSplineInit init(creature);
+    init.MovebyPath(path.getPath());
+    init.SetWalk((irand(0, RUNNING_CHANCE_RANDOMMV) > 0) ? true : false);
+    int32 traveltime = init.Launch();
+
     if (is_air_ok)
         i_nextMoveTime.Reset(0);
     else
-        i_nextMoveTime.Reset(urand(500, 10000));
-
-    creature.AddUnitState(UNIT_STATE_ROAMING_MOVE);
-
-    Movement::MoveSplineInit init(creature);
-    init.MoveTo(destX, destY, destZ, true);
-    init.SetWalk(true);
-    init.Launch();
+        i_nextMoveTime.Reset(traveltime + urand(500, 10000));
 
     //Call for creature group update
     if (creature.GetFormation() && creature.GetFormation()->getLeader() == &creature)
@@ -122,8 +128,8 @@ void RandomMovementGenerator<Creature>::Initialize(Creature &creature)
     if (!wander_distance)
         wander_distance = creature.GetRespawnRadius();
 
-    creature.AddUnitState(UNIT_STATE_ROAMING|UNIT_STATE_ROAMING_MOVE);
-    _setRandomLocation(creature);
+    creature.AddUnitState(UNIT_STATE_ROAMING);
+    i_nextMoveTime.Reset(urand(1000, 5000));
 }
 
 template<>
