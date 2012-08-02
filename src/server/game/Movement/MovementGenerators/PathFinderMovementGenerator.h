@@ -19,6 +19,8 @@
 #ifndef _PATH_INFO_H
 #define _PATH_INFO_H
 
+#include <ace/RW_Thread_Mutex.h>
+#include <ace/Thread_Mutex.h>
 #include "SharedDefines.h"
 #include "DetourNavMesh.h"
 #include "DetourNavMeshQuery.h"
@@ -130,6 +132,7 @@ class PathFinderMovementGenerator
         dtStatus findSmoothPath(const float* startPos, const float* endPos,
                               const dtPolyRef* polyPath, uint32 polyPathSize,
                               float* smoothPath, int* smoothPathSize, uint32 smoothPathMaxSize);
+        ACE_Thread_Mutex Lock;
 };
 
 #endif

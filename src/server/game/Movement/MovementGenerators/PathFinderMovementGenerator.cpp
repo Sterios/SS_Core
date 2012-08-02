@@ -96,6 +96,7 @@ bool PathFinderMovementGenerator::calculate(float destX, float destY, float dest
     else
     {
         // target moved, so we need to update the poly path
+        TRINITY_GUARD(ACE_Thread_Mutex, Lock);
         BuildPolyPath(start, dest);
         return true;
     }
