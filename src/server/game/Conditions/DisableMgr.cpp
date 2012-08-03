@@ -224,13 +224,13 @@ void LoadDisables()
                 MapEntry const* mapEntry = sMapStore.LookupEntry(entry);
                 if (!mapEntry)
                 {
-                    sLog->outErrorDb("Pathfinding for map entry %u from `disables` doesn't exist in dbc, skipped.", entry);
+                    sLog->outError(LOG_FILTER_SQL, "Pathfinding for map entry %u from `disables` doesn't exist in dbc, skipped.", entry);
                     continue;
                 }
                 if (flags)
-                    sLog->outErrorDb("Disable flags specified for pathfinding in map %u, useless data.", entry);
+                    sLog->outError(LOG_FILTER_SQL, "Disable flags specified for pathfinding in map %u, useless data.", entry);
 
-                sLog->outString("Pathfinding disabled for map %u.", entry);
+                sLog->outInfo(LOG_FILTER_GENERAL, "Pathfinding disabled for map %u.", entry);
                 break;
             }
             default:
