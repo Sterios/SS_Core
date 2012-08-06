@@ -3132,6 +3132,7 @@ OutdoorPvP.Wintergrasp.Enabled = 1
 #                    31 - Worldserver
 #                    32 - Game Events
 #                    33 - Calendar
+#                    34 - Player delete
 #
 #    Logger.name.Level
 #        Description: Logger level of logging
