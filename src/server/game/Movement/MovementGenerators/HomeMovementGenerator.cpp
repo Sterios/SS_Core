@@ -49,20 +49,20 @@ void HomeMovementGenerator<Creature>::_setTargetLocation(Creature & owner)
     init.SetWalk(false);
     init.Launch();
 
-    arrived = false;
+    _arrived = false;
     owner.ClearUnitState(UNIT_STATE_ALL_STATE & ~UNIT_STATE_EVADE);
 }
 
 bool HomeMovementGenerator<Creature>::Update(Creature &owner, const uint32 /*time_diff*/)
 {
-    arrived = owner.movespline->Finalized();
-    return !arrived;
+    _arrived = owner.movespline->Finalized();
+    return !_arrived;
 }
 
 void HomeMovementGenerator<Creature>::Finalize(Creature& owner)
 {
     owner.ClearUnitState(UNIT_STATE_EVADE);
-    if (arrived)
+    if (_arrived)
     {
         owner.SetWalk(true);
         owner.LoadCreaturesAddon(true);
