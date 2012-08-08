@@ -83,17 +83,17 @@ bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
                 _z = unit.GetBaseMap()->GetHeight(unit.GetPhaseMask(), x, y, MAX_HEIGHT) + 2.0f;
 
             PathFinderMovementGenerator path(&unit);
-            path.setPathLengthLimit(30.0f);
-            path.setUseStrightPath(false);
+            path.SetPathLengthLimit(30.0f);
+            path.SetUseStrightPath(false);
 
-            if (!unit.IsWithinLOS(x, y, z) || !path.calculate(x, y, z) || path.getPathType() & PATHFIND_NOPATH)
+            if (!unit.IsWithinLOS(x, y, z) || !path.Calculate(x, y, z) || path.GetPathType() & PATHFIND_NOPATH)
             {
                 _nextMoveTime.Reset(urand(200, 500));
                 return true;
             }
 
             Movement::MoveSplineInit init(unit);
-            init.MovebyPath(path.getPath());
+            init.MovebyPath(path.GetPath());
             init.SetWalk(true);
             init.Launch();
         }
