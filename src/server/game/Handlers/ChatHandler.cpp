@@ -50,7 +50,7 @@ bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg
         if (sWorld->getBoolConfig(CONFIG_CHAT_FAKE_MESSAGE_PREVENTING))
             stripLineInvisibleChars(msg);
 
-        if (!ConfigMgr::GetBoolDefault("ChatLog.Enable", true) &&     // To prevent double checking (if chat log is used, message is automatically validated)
+        if (ConfigMgr::GetBoolDefault("ChatLog.Enable", true) &&     // To prevent double checking (if chat log is used, message is automatically validated)
             sWorld->getIntConfig(CONFIG_CHAT_STRICT_LINK_CHECKING_SEVERITY) && AccountMgr::IsPlayerAccount(GetSecurity()) &&
             !ChatHandler(this).isValidChatMessage(msg.c_str()))
         {
