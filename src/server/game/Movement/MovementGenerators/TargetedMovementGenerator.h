@@ -28,11 +28,11 @@
 class TargetedMovementGeneratorBase
 {
     public:
-        TargetedMovementGeneratorBase(Unit &target) { Target.link(&target, this); }
+        TargetedMovementGeneratorBase(Unit &target) { _target.link(&target, this); }
         void StopFollowing() { }
 
-    protected:
-        FollowerReference Target;
+    private:
+        FollowerReference _target;
 };
 
 template<class T, typename D>
