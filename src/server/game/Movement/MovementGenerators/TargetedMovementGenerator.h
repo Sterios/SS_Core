@@ -31,7 +31,7 @@ class TargetedMovementGeneratorBase
         TargetedMovementGeneratorBase(Unit &target) { _target.link(&target, this); }
         void StopFollowing() { }
 
-    private:
+    protected:
         FollowerReference _target;
 };
 
@@ -49,11 +49,11 @@ class TargetedMovementGeneratorMedium : public MovementGeneratorMedium< T, D >, 
 
     public:
         bool Update(T &, const uint32 &);
-        Unit* GetTarget() const { return Target.getTarget(); }
+        Unit* GetTarget() const { return _target.getTarget(); }
 
-        void UnitSpeedChanged() { i_recalculateTravel=true; }
+        void UnitSpeedChanged() { _recalculateTravel=true; }
         void UpdateFinalDistance(float fDistance);
-        bool IsReachable() const { return (i_path) ? (i_path->getPathType() & PATHFIND_NORMAL) : true; }
+        bool IsReachable() const { return (_path) ? (_path->getPathType() & PATHFIND_NORMAL) : true; }
         void SetTargetLocation(T &);
 
     private:
