@@ -42,16 +42,11 @@
 #include "Transport.h"
 #include "TargetedMovementGenerator.h"                      // for HandleNpcUnFollowCommand
 #include "CreatureGroups.h"
-#include "OutdoorPvPMgr.h"
-#include "OutdoorPvPWG.h"
 #include "ace/INET_Addr.h"
 
 //mute player for some times
 bool ChatHandler::HandleMuteCommand(const char* args)
 {
-
-    std::string announce;
-
     char* nameStr;
     char* delayStr;
     extractOptFirstArg((char*)args, &nameStr, &delayStr);
@@ -62,13 +57,6 @@ bool ChatHandler::HandleMuteCommand(const char* args)
     std::string mutereasonstr = "No reason";
     if (mutereason != NULL)
          mutereasonstr = mutereason;
-
-    if(!mutereason)
-    {
-        PSendSysMessage("You must enter a reason of mute");
-        SetSentErrorMessage(true);
-        return false;
-    }
 
     Player* target;
     uint64 target_guid;
@@ -116,16 +104,6 @@ bool ChatHandler::HandleMuteCommand(const char* args)
     std::string nameLink = playerLink(target_name);
 
     PSendSysMessage(target ? LANG_YOU_DISABLE_CHAT : LANG_COMMAND_DISABLE_CHAT_DELAYED, nameLink.c_str(), notspeaktime, mutereasonstr.c_str());
-
-    announce = "Персонаж '";
-    announce += nameStr;
-    announce += "' получил мут на ";
-    announce += delayStr;
-    announce += " минут от '";
-    announce += m_session->GetPlayerName();
-    announce += "'. Причина: ";
-    announce += mutereason;
-    HandleAnnounceCommand(announce.c_str());
 
     return true;
 }
@@ -230,9 +208,6 @@ bool ChatHandler::HandleItemMoveCommand(const char* args)
 //kick player
 bool ChatHandler::HandleKickPlayerCommand(const char *args)
 {
-
-    std::string announce;
-
     Player* target = NULL;
     std::string playerName;
     if (!extractPlayerTarget((char*)args, &target, NULL, &playerName))
@@ -255,14 +230,6 @@ bool ChatHandler::HandleKickPlayerCommand(const char *args)
         PSendSysMessage(LANG_COMMAND_KICKMESSAGE, playerName.c_str());
 
     target->GetSession()->KickPlayer();
-
-    announce = "Игрок '";
-    announce += target->GetName();
-    announce += "' был кикнут персонажем '";
-    announce += m_session->GetPlayerName();
-    announce += "'.";
-    HandleAnnounceCommand(announce.c_str());
-
     return true;
 }
 

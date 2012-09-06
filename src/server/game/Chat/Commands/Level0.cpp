@@ -26,7 +26,6 @@
 #include "SystemConfig.h"
 #include "revision.h"
 #include "Util.h"
-#include "ArenaTeamMgr.h"
 
 bool ChatHandler::HandleHelpCommand(const char* args)
 {
