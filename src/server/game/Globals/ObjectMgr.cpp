@@ -297,7 +297,7 @@ void ObjectMgr::LoadCreatureLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu creature locale strings in %u ms", (unsigned long)_creatureLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadGossipMenuItemsLocales()
@@ -334,7 +334,7 @@ void ObjectMgr::LoadGossipMenuItemsLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu gossip_menu_option locale strings in %u ms", (unsigned long)_gossipMenuItemsLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadPointOfInterestLocales()
@@ -361,7 +361,7 @@ void ObjectMgr::LoadPointOfInterestLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu points_of_interest locale strings in %u ms", (unsigned long)_pointOfInterestLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadCreatureTemplates()
@@ -389,7 +389,7 @@ void ObjectMgr::LoadCreatureTemplates()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 creature template definitions. DB table `creature_template` is empty.");
-        
+
         return;
     }
 
@@ -492,7 +492,7 @@ void ObjectMgr::LoadCreatureTemplates()
         CheckCreatureTemplate(&itr->second);
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u creature definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadCreatureTemplateAddons()
@@ -505,7 +505,7 @@ void ObjectMgr::LoadCreatureTemplateAddons()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 creature template addon definitions. DB table `creature_template_addon` is empty.");
-        
+
         return;
     }
 
@@ -564,7 +564,7 @@ void ObjectMgr::LoadCreatureTemplateAddons()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u creature template addons in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::CheckCreatureTemplate(CreatureTemplate const* cInfo)
@@ -882,7 +882,7 @@ void ObjectMgr::LoadCreatureAddons()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 creature addon definitions. DB table `creature_addon` is empty.");
-        
+
         return;
     }
 
@@ -948,7 +948,7 @@ void ObjectMgr::LoadCreatureAddons()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u creature addons in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 CreatureAddon const* ObjectMgr::GetCreatureAddon(uint32 lowguid)
@@ -987,7 +987,7 @@ void ObjectMgr::LoadEquipmentTemplates()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 creature equipment templates. DB table `creature_equip_template` is empty!");
-        
+
         return;
     }
 
@@ -1040,7 +1040,7 @@ void ObjectMgr::LoadEquipmentTemplates()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u equipment templates in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 CreatureModelInfo const* ObjectMgr::GetCreatureModelInfo(uint32 modelId)
@@ -1118,7 +1118,7 @@ void ObjectMgr::LoadCreatureModelInfo()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 creature model definitions. DB table `creature_model_info` is empty.");
-        
+
         return;
     }
 
@@ -1163,7 +1163,7 @@ void ObjectMgr::LoadCreatureModelInfo()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u creature model based info in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadLinkedRespawn()
@@ -1177,7 +1177,7 @@ void ObjectMgr::LoadLinkedRespawn()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 linked respawns. DB table `linked_respawn` is empty.");
-        
+
         return;
     }
 
@@ -1349,7 +1349,7 @@ void ObjectMgr::LoadLinkedRespawn()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded " UI64FMTD " linked respawns in %u ms", uint64(_linkedRespawnStore.size()), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 bool ObjectMgr::SetCreatureLinkedRespawn(uint32 guidLow, uint32 linkedGuidLow)
@@ -1409,7 +1409,7 @@ void ObjectMgr::LoadCreatures()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 creatures. DB table `creature` is empty.");
-        
+
         return;
     }
 
@@ -1536,7 +1536,7 @@ void ObjectMgr::LoadCreatures()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u creatures in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::AddCreatureToGrid(uint32 guid, CreatureData const* data)
@@ -1719,7 +1719,7 @@ void ObjectMgr::LoadGameobjects()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 gameobjects. DB table `gameobject` is empty.");
-        
+
         return;
     }
 
@@ -1841,7 +1841,7 @@ void ObjectMgr::LoadGameobjects()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu gameobjects in %u ms", (unsigned long)_gameObjectDataStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::AddGameobjectToGrid(uint32 guid, GameObjectData const* data)
@@ -2035,7 +2035,7 @@ void ObjectMgr::LoadItemLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu Item locale strings in %u ms", (unsigned long)_itemLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadItemTemplates()
@@ -2078,7 +2078,7 @@ void ObjectMgr::LoadItemTemplates()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 item templates. DB table `item_template` is empty.");
-        
+
         return;
     }
 
@@ -2640,7 +2640,7 @@ void ObjectMgr::LoadItemTemplates()
         sLog->outError(LOG_FILTER_SQL, "Item (Entry: %u) does not exist in `item_template` but is referenced in `CharStartOutfit.dbc`", *itr);
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u item templates in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 ItemTemplate const* ObjectMgr::GetItemTemplate(uint32 entry)
@@ -2676,7 +2676,7 @@ void ObjectMgr::LoadItemSetNameLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded " UI64FMTD " Item set name locale strings in %u ms", uint64(_itemSetNameLocaleStore.size()), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadItemSetNames()
@@ -2705,7 +2705,7 @@ void ObjectMgr::LoadItemSetNames()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 item set names. DB table `item_set_names` is empty.");
-        
+
         return;
     }
 
@@ -2760,7 +2760,7 @@ void ObjectMgr::LoadItemSetNames()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u item set names in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadVehicleTemplateAccessories()
@@ -2777,7 +2777,7 @@ void ObjectMgr::LoadVehicleTemplateAccessories()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 vehicle template accessories. DB table `vehicle_template_accessory` is empty.");
-        
+
         return;
     }
 
@@ -2817,7 +2817,7 @@ void ObjectMgr::LoadVehicleTemplateAccessories()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u Vehicle Template Accessories in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadVehicleAccessories()
@@ -2834,7 +2834,7 @@ void ObjectMgr::LoadVehicleAccessories()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 Vehicle Accessories in %u ms", GetMSTimeDiffToNow(oldMSTime));
-        
+
         return;
     }
 
@@ -2862,7 +2862,7 @@ void ObjectMgr::LoadVehicleAccessories()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u Vehicle Accessories in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadPetLevelInfo()
@@ -2875,7 +2875,7 @@ void ObjectMgr::LoadPetLevelInfo()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 level pet stats definitions. DB table `pet_levelstats` is empty.");
-        
+
         return;
     }
 
@@ -2955,7 +2955,7 @@ void ObjectMgr::LoadPetLevelInfo()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u level pet stats definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 PetLevelInfo const* ObjectMgr::GetPetLevelInfo(uint32 creature_id, uint8 level) const
@@ -3021,7 +3021,7 @@ void ObjectMgr::LoadPlayerInfo()
 
         if (!result)
         {
-            
+
             sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 player create definitions. DB table `playercreateinfo` is empty.");
             exit(1);
         }
@@ -3097,7 +3097,7 @@ void ObjectMgr::LoadPlayerInfo()
             while (result->NextRow());
 
             sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u player create definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-            
+
         }
     }
 
@@ -3111,7 +3111,7 @@ void ObjectMgr::LoadPlayerInfo()
         if (!result)
         {
             sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 custom player create items. DB table `playercreateinfo_item` is empty.");
-            
+
         }
         else
         {
@@ -3169,7 +3169,7 @@ void ObjectMgr::LoadPlayerInfo()
             while (result->NextRow());
 
             sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u custom player create items in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-            
+
         }
     }
 
@@ -3184,7 +3184,7 @@ void ObjectMgr::LoadPlayerInfo()
         if (!result)
         {
             sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 player create spells. DB table `%s` is empty.", sWorld->getBoolConfig(CONFIG_START_ALL_SPELLS) ? "playercreateinfo_spell_custom" : "playercreateinfo_spell");
-            
+
         }
         else
         {
@@ -3226,7 +3226,7 @@ void ObjectMgr::LoadPlayerInfo()
             while (result->NextRow());
 
             sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u player create spells in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-            
+
         }
     }
 
@@ -3241,7 +3241,7 @@ void ObjectMgr::LoadPlayerInfo()
         if (!result)
         {
             sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 player create actions. DB table `playercreateinfo_action` is empty.");
-            
+
         }
         else
         {
@@ -3273,7 +3273,7 @@ void ObjectMgr::LoadPlayerInfo()
             while (result->NextRow());
 
             sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u player create actions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-            
+
         }
     }
 
@@ -3288,7 +3288,7 @@ void ObjectMgr::LoadPlayerInfo()
         if (!result)
         {
             sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 level health/mana definitions. DB table `game_event_condition` is empty.");
-            
+
             exit(1);
         }
 
@@ -3355,7 +3355,7 @@ void ObjectMgr::LoadPlayerInfo()
         }
 
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u level health/mana definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-        
+
     }
 
     // Loading levels data (class/race dependent)
@@ -3369,7 +3369,7 @@ void ObjectMgr::LoadPlayerInfo()
         if (!result)
         {
             sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 level stats definitions. DB table `player_levelstats` is empty.");
-            
+
             exit(1);
         }
 
@@ -3469,7 +3469,7 @@ void ObjectMgr::LoadPlayerInfo()
         }
 
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u level stats definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-        
+
     }
 
     // Loading xp per level data
@@ -3487,7 +3487,7 @@ void ObjectMgr::LoadPlayerInfo()
         if (!result)
         {
             sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 xp for level definitions. DB table `player_xp_for_level` is empty.");
-            
+
             exit(1);
         }
 
@@ -3528,7 +3528,7 @@ void ObjectMgr::LoadPlayerInfo()
         }
 
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u xp for level definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-        
+
     }
 }
 
@@ -3686,7 +3686,7 @@ void ObjectMgr::LoadQuests()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 quests definitions. DB table `quest_template` is empty.");
-        
+
         return;
     }
 
@@ -4315,7 +4315,7 @@ void ObjectMgr::LoadQuests()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu quests definitions in %u ms", (unsigned long)_questTemplates.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadQuestLocales()
@@ -4364,7 +4364,7 @@ void ObjectMgr::LoadQuestLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu Quest locale strings in %u ms", (unsigned long)_questLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadScripts(ScriptsType type)
@@ -4393,7 +4393,7 @@ void ObjectMgr::LoadScripts(ScriptsType type)
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 script definitions. DB table `%s` is empty!", tableName.c_str());
-        
+
         return;
     }
 
@@ -4685,7 +4685,7 @@ void ObjectMgr::LoadScripts(ScriptsType type)
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u script definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadGameObjectScripts()
@@ -4830,7 +4830,7 @@ void ObjectMgr::LoadSpellScriptNames()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 spell script names. DB table `spell_script_names` is empty!");
-        
+
         return;
     }
 
@@ -4878,7 +4878,7 @@ void ObjectMgr::LoadSpellScriptNames()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u spell script names in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::ValidateSpellScripts()
@@ -4888,7 +4888,7 @@ void ObjectMgr::ValidateSpellScripts()
     if (_spellScriptsStore.empty())
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Validated 0 scripts.");
-        
+
         return;
     }
 
@@ -4936,7 +4936,7 @@ void ObjectMgr::ValidateSpellScripts()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Validated %u scripts in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadPageTexts()
@@ -4949,7 +4949,7 @@ void ObjectMgr::LoadPageTexts()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 page texts. DB table `page_text` is empty!");
-        
+
         return;
     }
 
@@ -4979,7 +4979,7 @@ void ObjectMgr::LoadPageTexts()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u page texts in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 PageText const* ObjectMgr::GetPageText(uint32 pageEntry)
@@ -5015,7 +5015,7 @@ void ObjectMgr::LoadPageTextLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu PageText locale strings in %u ms", (unsigned long)_pageTextLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadInstanceTemplate()
@@ -5028,7 +5028,7 @@ void ObjectMgr::LoadInstanceTemplate()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 instance templates. DB table `page_text` is empty!");
-        
+
         return;
     }
 
@@ -5058,7 +5058,7 @@ void ObjectMgr::LoadInstanceTemplate()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u instance templates in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 InstanceTemplate const* ObjectMgr::GetInstanceTemplate(uint32 mapID)
@@ -5079,7 +5079,7 @@ void ObjectMgr::LoadInstanceEncounters()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 instance encounters, table is empty!");
-        
+
         return;
     }
 
@@ -5148,7 +5148,7 @@ void ObjectMgr::LoadInstanceEncounters()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u instance encounters in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 GossipText const* ObjectMgr::GetGossipText(uint32 Text_ID) const
@@ -5169,7 +5169,7 @@ void ObjectMgr::LoadGossipText()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u npc texts", count);
-        
+
         return;
     }
     _gossipTextStore.rehash(result->GetRowCount());
@@ -5209,7 +5209,7 @@ void ObjectMgr::LoadGossipText()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u npc texts in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadNpcTextLocales()
@@ -5252,7 +5252,7 @@ void ObjectMgr::LoadNpcTextLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu NpcText locale strings in %u ms", (unsigned long)_npcTextLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 //not very fast function but it is called only once a day, or on starting-up
@@ -5278,7 +5278,7 @@ void ObjectMgr::ReturnOrDeleteOldMails(bool serverUp)
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> No expired mails found.");
-        
+
         return;                                             // any mails need to be returned or deleted
     }
 
@@ -5382,7 +5382,7 @@ void ObjectMgr::ReturnOrDeleteOldMails(bool serverUp)
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Processed %u expired mails: %u deleted and %u returned in %u ms", deletedCount + returnedCount, deletedCount, returnedCount, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadQuestAreaTriggers()
@@ -5396,7 +5396,7 @@ void ObjectMgr::LoadQuestAreaTriggers()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 quest trigger points. DB table `areatrigger_involvedrelation` is empty.");
-        
+
         return;
     }
 
@@ -5441,7 +5441,7 @@ void ObjectMgr::LoadQuestAreaTriggers()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u quest trigger points in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadTavernAreaTriggers()
@@ -5455,7 +5455,7 @@ void ObjectMgr::LoadTavernAreaTriggers()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 tavern triggers. DB table `areatrigger_tavern` is empty.");
-        
+
         return;
     }
 
@@ -5480,7 +5480,7 @@ void ObjectMgr::LoadTavernAreaTriggers()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u tavern triggers in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadAreaTriggerScripts()
@@ -5493,7 +5493,7 @@ void ObjectMgr::LoadAreaTriggerScripts()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 areatrigger scripts. DB table `areatrigger_scripts` is empty.");
-        
+
         return;
     }
 
@@ -5518,7 +5518,7 @@ void ObjectMgr::LoadAreaTriggerScripts()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u areatrigger scripts in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 uint32 ObjectMgr::GetNearestTaxiNode(float x, float y, float z, uint32 mapid, uint32 team)
@@ -5637,7 +5637,7 @@ void ObjectMgr::LoadGraveyardZones()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 graveyard-zone links. DB table `game_graveyard_zone` is empty.");
-        
+
         return;
     }
 
@@ -5684,7 +5684,7 @@ void ObjectMgr::LoadGraveyardZones()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u graveyard-zone links in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 WorldSafeLocsEntry const* ObjectMgr::GetDefaultGraveYard(uint32 team)
@@ -5930,7 +5930,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 area trigger teleport definitions. DB table `areatrigger_teleport` is empty.");
-        
+
         return;
     }
 
@@ -5977,7 +5977,7 @@ void ObjectMgr::LoadAreaTriggerTeleports()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u area trigger teleport definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadAccessRequirements()
@@ -5991,7 +5991,7 @@ void ObjectMgr::LoadAccessRequirements()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 access requirement definitions. DB table `access_requirement` is empty.");
-        
+
         return;
     }
 
@@ -6069,7 +6069,7 @@ void ObjectMgr::LoadAccessRequirements()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u access requirement definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 /*
@@ -6294,7 +6294,7 @@ void ObjectMgr::LoadGameObjectLocales()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %lu gameobject locale strings in %u ms", (unsigned long)_gameObjectLocaleStore.size(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 inline void CheckGOLockId(GameObjectTemplate const* goInfo, uint32 dataN, uint32 N)
@@ -6371,7 +6371,7 @@ void ObjectMgr::LoadGameObjectTemplate()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 gameobject definitions. DB table `gameobject_template` is empty.");
-        
+
         return;
     }
 
@@ -6541,7 +6541,7 @@ void ObjectMgr::LoadGameObjectTemplate()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u game object templates in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadExplorationBaseXP()
@@ -6553,7 +6553,7 @@ void ObjectMgr::LoadExplorationBaseXP()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 BaseXP definitions. DB table `exploration_basexp` is empty.");
-        
+
         return;
     }
 
@@ -6570,7 +6570,7 @@ void ObjectMgr::LoadExplorationBaseXP()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u BaseXP definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 uint32 ObjectMgr::GetBaseXP(uint8 level)
@@ -6594,7 +6594,7 @@ void ObjectMgr::LoadPetNames()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 pet name parts. DB table `pet_name_generation` is empty!");
-        
+
         return;
     }
 
@@ -6615,7 +6615,7 @@ void ObjectMgr::LoadPetNames()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u pet name parts in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadPetNumber()
@@ -6630,7 +6630,7 @@ void ObjectMgr::LoadPetNumber()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded the max pet number: %d in %u ms", _hiPetNumber-1, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 std::string ObjectMgr::GeneratePetName(uint32 entry)
@@ -6664,7 +6664,7 @@ void ObjectMgr::LoadCorpses()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 corpses. DB table `corpse` is empty.");
-        
+
         return;
     }
 
@@ -6693,7 +6693,7 @@ void ObjectMgr::LoadCorpses()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u corpses in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadReputationRewardRate()
@@ -6708,7 +6708,7 @@ void ObjectMgr::LoadReputationRewardRate()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded `reputation_reward_rate`, table is empty!");
-        
+
         return;
     }
 
@@ -6756,7 +6756,7 @@ void ObjectMgr::LoadReputationRewardRate()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u reputation_reward_rate in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadReputationOnKill()
@@ -6777,7 +6777,7 @@ void ObjectMgr::LoadReputationOnKill()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 creature award reputation definitions. DB table `creature_onkill_reputation` is empty.");
-        
+
         return;
     }
 
@@ -6830,7 +6830,7 @@ void ObjectMgr::LoadReputationOnKill()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u creature award reputation definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadReputationSpilloverTemplate()
@@ -6845,7 +6845,7 @@ void ObjectMgr::LoadReputationSpilloverTemplate()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded `reputation_spillover_template`, table is empty.");
-        
+
         return;
     }
 
@@ -6942,7 +6942,7 @@ void ObjectMgr::LoadReputationSpilloverTemplate()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u reputation_spillover_template in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadPointsOfInterest()
@@ -6959,7 +6959,7 @@ void ObjectMgr::LoadPointsOfInterest()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 Points of Interest definitions. DB table `points_of_interest` is empty.");
-        
+
         return;
     }
 
@@ -6989,7 +6989,7 @@ void ObjectMgr::LoadPointsOfInterest()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u Points of Interest definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadQuestPOI()
@@ -7006,7 +7006,7 @@ void ObjectMgr::LoadQuestPOI()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 quest POI definitions. DB table `quest_poi` is empty.");
-        
+
         return;
     }
 
@@ -7061,7 +7061,7 @@ void ObjectMgr::LoadQuestPOI()
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u quest POI definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadNPCSpellClickSpells()
@@ -7075,7 +7075,7 @@ void ObjectMgr::LoadNPCSpellClickSpells()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 spellclick spells. DB table `npc_spellclick_spells` is empty.");
-        
+
         return;
     }
 
@@ -7129,7 +7129,7 @@ void ObjectMgr::LoadNPCSpellClickSpells()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u spellclick definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::DeleteCreatureData(uint32 guid)
@@ -7179,7 +7179,7 @@ void ObjectMgr::LoadQuestRelationsHelper(QuestRelations& map, std::string table,
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 quest relations from `%s`, table is empty.", table.c_str());
-        
+
         return;
     }
 
@@ -7208,7 +7208,7 @@ void ObjectMgr::LoadQuestRelationsHelper(QuestRelations& map, std::string table,
     } while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u quest relations from %s in %u ms", count, table.c_str(), GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadGameobjectQuestRelations()
@@ -7278,7 +7278,7 @@ void ObjectMgr::LoadReservedPlayersNames()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 reserved player names. DB table `reserved_name` is empty!");
-        
+
         return;
     }
 
@@ -7305,7 +7305,7 @@ void ObjectMgr::LoadReservedPlayersNames()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u reserved player names in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 bool ObjectMgr::IsReservedName(const std::string& name) const
@@ -7459,7 +7459,7 @@ void ObjectMgr::LoadGameObjectForQuests()
     if (sObjectMgr->GetGameObjectTemplates()->empty())
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 GameObjects for quests");
-        
+
         return;
     }
 
@@ -7508,7 +7508,7 @@ void ObjectMgr::LoadGameObjectForQuests()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u GameObjects for quests in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 bool ObjectMgr::LoadTrinityStrings(const char* table, int32 min_value, int32 max_value)
@@ -7557,7 +7557,7 @@ bool ObjectMgr::LoadTrinityStrings(const char* table, int32 min_value, int32 max
             sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 trinity strings. DB table `%s` is empty. Cannot continue.", table);
         else
             sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 string templates. DB table `%s` is empty.", table);
-        
+
         return false;
     }
 
@@ -7600,7 +7600,7 @@ bool ObjectMgr::LoadTrinityStrings(const char* table, int32 min_value, int32 max
     else
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u string templates from %s in %u ms", count, table, GetMSTimeDiffToNow(oldMSTime));
 
-    
+
     return true;
 }
 
@@ -7632,7 +7632,7 @@ void ObjectMgr::LoadFishingBaseSkillLevel()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 areas for fishing base skill level. DB table `skill_fishing_base_level` is empty.");
-        
+
         return;
     }
 
@@ -7657,7 +7657,7 @@ void ObjectMgr::LoadFishingBaseSkillLevel()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u areas for fishing base skill level in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 bool ObjectMgr::CheckDeclinedNames(std::wstring w_ownname, DeclinedName const& names)
@@ -7741,7 +7741,7 @@ void ObjectMgr::LoadGameTele()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 GameTeleports. DB table `game_tele` is empty!");
-        
+
         return;
     }
 
@@ -7783,7 +7783,7 @@ void ObjectMgr::LoadGameTele()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u GameTeleports in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 GameTele const* ObjectMgr::GetGameTele(const std::string& name) const
@@ -7882,7 +7882,7 @@ void ObjectMgr::LoadMailLevelRewards()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 level dependent mail rewards. DB table `mail_level_reward` is empty.");
-        
+
         return;
     }
 
@@ -7928,7 +7928,7 @@ void ObjectMgr::LoadMailLevelRewards()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u level dependent mail rewards in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::AddSpellToTrainer(uint32 entry, uint32 spell, uint32 spellCost, uint32 reqSkill, uint32 reqSkillValue, uint32 reqLevel)
@@ -8025,7 +8025,7 @@ void ObjectMgr::LoadTrainerSpell()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">>  Loaded 0 Trainers. DB table `npc_trainer` is empty!");
-        
+
         return;
     }
 
@@ -8049,7 +8049,7 @@ void ObjectMgr::LoadTrainerSpell()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %d Trainers in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 int ObjectMgr::LoadReferenceVendor(int32 vendor, int32 item, std::set<uint32> *skip_vendors)
@@ -8105,7 +8105,7 @@ void ObjectMgr::LoadVendors()
     QueryResult result = WorldDatabase.Query("SELECT entry, item, maxcount, incrtime, ExtendedCost FROM npc_vendor ORDER BY entry, slot ASC");
     if (!result)
     {
-        
+
         sLog->outError(LOG_FILTER_SQL, ">>  Loaded 0 Vendors. DB table `npc_vendor` is empty!");
         return;
     }
@@ -8140,7 +8140,7 @@ void ObjectMgr::LoadVendors()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %d Vendors in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadGossipMenu()
@@ -8154,7 +8154,7 @@ void ObjectMgr::LoadGossipMenu()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0  gossip_menu entries. DB table `gossip_menu` is empty!");
-        
+
         return;
     }
 
@@ -8182,7 +8182,7 @@ void ObjectMgr::LoadGossipMenu()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u gossip_menu entries in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadGossipMenuItems()
@@ -8201,7 +8201,7 @@ void ObjectMgr::LoadGossipMenuItems()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 gossip_menu_option entries. DB table `gossip_menu_option` is empty!");
-        
+
         return;
     }
 
@@ -8246,7 +8246,7 @@ void ObjectMgr::LoadGossipMenuItems()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u gossip_menu_option entries in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::AddVendorItem(uint32 entry, uint32 item, int32 maxcount, uint32 incrtime, uint32 extendedCost, bool persist /*= true*/)
@@ -8409,7 +8409,7 @@ void ObjectMgr::LoadScriptNames()
 
     if (!result)
     {
-        
+
         sLog->outError(LOG_FILTER_SQL, ">> Loaded empty set of Script Names!");
         return;
     }
@@ -8425,7 +8425,7 @@ void ObjectMgr::LoadScriptNames()
 
     std::sort(_scriptNamesStore.begin(), _scriptNamesStore.end());
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %d Script Names in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 uint32 ObjectMgr::GetScriptId(const char *name)
@@ -8529,7 +8529,7 @@ void ObjectMgr::LoadCreatureClassLevelStats()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 creature base stats. DB table `creature_classlevelstats` is empty.");
-        
+
         return;
     }
 
@@ -8578,7 +8578,7 @@ void ObjectMgr::LoadCreatureClassLevelStats()
     }
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u creature base stats in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadFactionChangeAchievements()
@@ -8590,7 +8590,7 @@ void ObjectMgr::LoadFactionChangeAchievements()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 faction change achievement pairs. DB table `player_factionchange_achievement` is empty.");
-        
+
         return;
     }
 
@@ -8615,7 +8615,7 @@ void ObjectMgr::LoadFactionChangeAchievements()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u faction change achievement pairs in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadFactionChangeItems()
@@ -8627,7 +8627,7 @@ void ObjectMgr::LoadFactionChangeItems()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 faction change item pairs. DB table `player_factionchange_items` is empty.");
-        
+
         return;
     }
 
@@ -8652,7 +8652,7 @@ void ObjectMgr::LoadFactionChangeItems()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u faction change item pairs in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadFactionChangeSpells()
@@ -8664,7 +8664,7 @@ void ObjectMgr::LoadFactionChangeSpells()
     if (!result)
     {
         sLog->outError(LOG_FILTER_SQL, ">> Loaded 0 faction change spell pairs. DB table `player_factionchange_spells` is empty.");
-        
+
         return;
     }
 
@@ -8689,7 +8689,7 @@ void ObjectMgr::LoadFactionChangeSpells()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u faction change spell pairs in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 void ObjectMgr::LoadFactionChangeReputations()
@@ -8701,7 +8701,7 @@ void ObjectMgr::LoadFactionChangeReputations()
     if (!result)
     {
         sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded 0 faction change reputation pairs. DB table `player_factionchange_reputations` is empty.");
-        
+
         return;
     }
 
@@ -8726,7 +8726,7 @@ void ObjectMgr::LoadFactionChangeReputations()
     while (result->NextRow());
 
     sLog->outInfo(LOG_FILTER_GENERAL, ">> Loaded %u faction change reputation pairs in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
-    
+
 }
 
 GameObjectTemplate const* ObjectMgr::GetGameObjectTemplate(uint32 entry)
