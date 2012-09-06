@@ -40,6 +40,7 @@ enum WarlockSpells
     WARLOCK_HAUNT                           = 48181,
     WARLOCK_HAUNT_HEAL                      = 48210,
     WARLOCK_UNSTABLE_AFFLICTION_DISPEL      = 31117,
+    WARLOCK_CURSE_OF_DOOM_EFFECT            = 18662,
 };
 
 class spell_warl_banish : public SpellScriptLoader
