@@ -22,7 +22,8 @@ SDComment: not sure about timers.
 SDCategory: Trial of the Champion
 EndScriptData */
 
-#include "ScriptPCH.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
 #include "ScriptedEscortAI.h"
 #include "trial_of_the_champion.h"
 #define SAY_RESET  -1999927
