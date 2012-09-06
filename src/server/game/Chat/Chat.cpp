@@ -38,13 +38,6 @@
 
 bool ChatHandler::load_command_table = true;
 
-// wrapper for old-style handlers
-template<bool (ChatHandler::*F)(const char*)>
-bool OldHandler(ChatHandler* chatHandler, const char* args)
-{
-    return (chatHandler->*F)(args);
-}
-
 // get number of commands in table
 static size_t getCommandTableSize(const ChatCommand* commands)
 {
@@ -68,21 +61,6 @@ static size_t appendCommandTable(ChatCommand* target, const ChatCommand* source)
 ChatCommand* ChatHandler::getCommandTable()
 {
 
-    static ChatCommand groupCommandTable[] =
-    {
-        { "leader",         SEC_ADMINISTRATOR, false,  OldHandler<&ChatHandler::HandleGroupLeaderCommand>,         "", NULL },
-        { "disband",        SEC_ADMINISTRATOR, false,  OldHandler<&ChatHandler::HandleGroupDisbandCommand>,        "", NULL },
-        { "remove",         SEC_ADMINISTRATOR, false,  OldHandler<&ChatHandler::HandleGroupRemoveCommand>,         "", NULL },
-        { NULL,             0,                 false,  NULL,                                           "", NULL }
-    };
-
-    static ChatCommand pdumpCommandTable[] =
-    {
-        { "load",           SEC_ADMINISTRATOR,  true,  OldHandler<&ChatHandler::HandlePDumpLoadCommand>,           "", NULL },
-        { "write",          SEC_ADMINISTRATOR,  true,  OldHandler<&ChatHandler::HandlePDumpWriteCommand>,          "", NULL },
-        { NULL,             0,                  false, NULL,                                           "", NULL }
-    };
-
     static ChatCommand resetCommandTable[] =
     {
         { "achievements",   SEC_ADMINISTRATOR,  true,  OldHandler<&ChatHandler::HandleResetAchievementsCommand>,   "", NULL },
@@ -92,20 +70,6 @@ ChatCommand* ChatHandler::getCommandTable()
         { "stats",          SEC_ADMINISTRATOR,  true,  OldHandler<&ChatHandler::HandleResetStatsCommand>,          "", NULL },
         { "talents",        SEC_ADMINISTRATOR,  true,  OldHandler<&ChatHandler::HandleResetTalentsCommand>,        "", NULL },
         { "all",            SEC_ADMINISTRATOR,  true,  OldHandler<&ChatHandler::HandleResetAllCommand>,            "", NULL },
-        { NULL,             0,                  false, NULL,                                           "", NULL }
-    };
-
-    static ChatCommand commandTable[] =
-    {
-        { "pdump",          SEC_ADMINISTRATOR,  true,  NULL,                                           "", pdumpCommandTable    },
-        { "group",          SEC_ADMINISTRATOR,  false, NULL,                                           "", groupCommandTable    },
-        { "reset",          SEC_ADMINISTRATOR,  true,  NULL,                                           "", resetCommandTable    },
-
-        { "possess",        SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandlePossessCommand>,             "", NULL },
-        { "unpossess",      SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleUnPossessCommand>,           "", NULL },
-        { "bindsight",      SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleBindSightCommand>,           "", NULL },
-        { "unbindsight",    SEC_ADMINISTRATOR,  false, OldHandler<&ChatHandler::HandleUnbindSightCommand>,         "", NULL },
-        { "playall",        SEC_GAMEMASTER,  false, OldHandler<&ChatHandler::HandlePlayAllCommand>,             "", NULL },
         { NULL,             0,                  false, NULL,                                           "", NULL }
     };
 
@@ -120,25 +84,23 @@ ChatCommand* ChatHandler::getCommandTable()
 
         {
             // count total number of top-level commands
-            size_t total = getCommandTableSize(commandTable);
+            size_t total = 0;
             std::vector<ChatCommand*> const& dynamic = sScriptMgr->GetChatCommands();
             for (std::vector<ChatCommand*>::const_iterator it = dynamic.begin(); it != dynamic.end(); ++it)
                 total += getCommandTableSize(*it);
             total += 1; // ending zero
 
             // cache top-level commands
+            size_t added = 0;
             commandTableCache = (ChatCommand*)malloc(sizeof(ChatCommand) * total);
             memset(commandTableCache, 0, sizeof(ChatCommand) * total);
             ACE_ASSERT(commandTableCache);
-            size_t added = appendCommandTable(commandTableCache, commandTable);
             for (std::vector<ChatCommand*>::const_iterator it = dynamic.begin(); it != dynamic.end(); ++it)
                 added += appendCommandTable(commandTableCache + added, *it);
         }
 
         PreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_SEL_COMMANDS);
-
         PreparedQueryResult result = WorldDatabase.Query(stmt);
-
         if (result)
         {
             do
@@ -148,7 +110,8 @@ ChatCommand* ChatHandler::getCommandTable()
 
                 SetDataForCommandInTable(commandTableCache, name.c_str(), fields[1].GetUInt8(), fields[2].GetString(), name);
 
-            } while (result->NextRow());
+            }
+            while (result->NextRow());
         }
     }
 

@@ -161,6 +161,19 @@ class ChatHandler
         bool HandleWintergraspSwitchTeamCommand(const char *args);
         bool HandleWintergraspTimerCommand(const char *args);
 
+        bool HandlePossessCommand(const char* args);
+        bool HandleUnPossessCommand(const char* args);
+        bool HandleBindSightCommand(const char* args);
+        bool HandleUnbindSightCommand(const char* args);
+
+        bool HandlePDumpLoadCommand(const char *args);
+        bool HandlePDumpWriteCommand(const char *args);
+
+        bool HandleGroupLeaderCommand(const char* args);
+        bool HandleGroupDisbandCommand(const char* args);
+        bool HandleGroupRemoveCommand(const char* args);
+
+        bool HandlePlayAllCommand(const char* args);
     private:
         WorldSession* m_session;                           // != NULL for chat command call and NULL for CLI command
 
