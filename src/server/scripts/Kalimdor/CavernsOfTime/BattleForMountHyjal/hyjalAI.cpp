@@ -406,7 +406,7 @@ void hyjalAI::Reset()
             instance->DoUpdateWorldState(WORLD_STATE_ENEMYCOUNT, 0);
             instance->SetData(DATA_RESET_TRASH_COUNT, 0);
         }
-    } else sLog->outError(ERROR_INST_DATA);
+    } else sLog->outError(LOG_FILTER_TSCR, ERROR_INST_DATA);
 
     //Visibility
     DoHide = true;
@@ -539,7 +539,7 @@ void hyjalAI::SummonNextWave(const Wave wave[18], uint32 Count, float Base[4][3]
 
     if (!instance)
     {
-        sLog->outError(ERROR_INST_DATA);
+        sLog->outError(LOG_FILTER_TSCR, ERROR_INST_DATA);
         return;
     }
     InfernalCount = 0;//reset infernal count every new wave
@@ -569,7 +569,7 @@ void hyjalAI::SummonNextWave(const Wave wave[18], uint32 Count, float Base[4][3]
         else
         {
             NextWaveTimer = 15000;
-            sLog->outDebug(LOG_FILTER_TSCR, "TSCR: HyjalAI: debug mode is enabled. Next Wave in 15 seconds");
+            sLog->outDebug(LOG_FILTER_TSCR, "HyjalAI: debug mode is enabled. Next Wave in 15 seconds");
         }
     }
     else
@@ -613,7 +613,7 @@ uint32 hyjalAI::GetInstanceData(uint32 Event)
 {
     if (instance)
         return instance->GetData(Event);
-    else sLog->outError(ERROR_INST_DATA);
+    else sLog->outError(LOG_FILTER_TSCR, ERROR_INST_DATA);
 
     return 0;
 }
