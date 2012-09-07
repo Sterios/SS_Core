@@ -26,9 +26,9 @@ LexicsCutter::LexicsCutter(const std::string& analogsFileName, const std::string
     : _invalidChars("~`!@#$%^&*()-_+=[{]}|\\;:'\",<.>/?"), _ignoreMiddleSpaces(ignoreMiddleSpaces), _ignoreLetterRepeat(ignoreLetterRepeat)
 {
     if (!_ReadLetterAnalogs(analogsFileName))
-        sLog->outError("CHAT LOG: Unable to open file with letter analogs '%s'", analogsFileName);
+        sLog->outInfo(LOG_FILTER_GENERAL, "CHAT LOG: Unable to open file with letter analogs '%s'", analogsFileName);
     if (!_ReadInnormativeWords(innormativeWordsFileName))
-        sLog->outError("CHAT LOG: Unable to open file with innormative words '%s'", innormativeWordsFileName);
+        sLog->outInfo(LOG_FILTER_GENERAL, "CHAT LOG: Unable to open file with innormative words '%s'", innormativeWordsFileName);
     _MapInnormativeWords();
 }
 
